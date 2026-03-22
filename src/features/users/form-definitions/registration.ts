@@ -1,7 +1,7 @@
-import type { User } from '@/types/entities';
+import { CreateUserDto } from '@/types/entities';
 import type { FormDefinition } from '@/shared/components/form/types';
 
-type RegistrationUser = User & {
+type RegistrationUser = CreateUserDto & {
   confirmPassword: string;
 };
 

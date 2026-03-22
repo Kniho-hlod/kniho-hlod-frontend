@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import { API_ENDPOINTS } from '@/stores/api-end-points';
+import { getServices } from '@eleansphere/kniho-hlod-service';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
 import { useFileStore } from '@/features/account/store';
@@ -38,18 +38,9 @@ async function uploadAvatar() {
   try {
     const meta = { name: selectedFile.value.name, user: loggedUser?.id };
     const savedMeta = await fileStore.saveEntity(meta as Parameters<typeof fileStore.saveEntity>[0]);
+    if (!savedMeta) throw new Error('Failed to create file record');
 
-    const formData = new FormData();
-    formData.append('avatar', selectedFile.value);
-    formData.append('id', savedMeta.id);
-
-    const response = await fetch(`${API_ENDPOINTS.files}/${savedMeta.id}/avatar`, {
-      method: 'POST',
-      body: formData,
-      headers: { Authorization: `Bearer ${authorizationStore().getToken()}` },
-    });
-
-    if (!response.ok) throw new Error('Upload failed');
+    await getServices().files.upload(savedMeta.id, selectedFile.value);
     showSaveSuccess(t('common.save'), t('account.avatar'));
     selectedFile.value = null;
   } catch {
@@ -81,10 +72,7 @@ onMounted(async () => {
   const imageId = fileStore.entities.find((img) => img.user === loggedUser!.id)?.id;
   if (imageId) {
     try {
-      const res = await fetch(`${API_ENDPOINTS.files}/${imageId}/avatar`, {
-        headers: { Authorization: `Bearer ${authorizationStore().getToken()}` },
-      });
-      currentAvatarUrl.value = res.url;
+      currentAvatarUrl.value = getServices().files.getFileUrl(imageId);
     } catch {
       // non-critical
     }

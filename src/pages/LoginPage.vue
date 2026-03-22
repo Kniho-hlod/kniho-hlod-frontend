@@ -3,22 +3,22 @@ import { registrationForm } from '@/features/users/form-definitions/registration
 import GenericForm from '@/shared/components/form/GenericForm.vue';
 import { useNotification } from '@/shared/composables/use-notification';
 import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
+import { CreateUserDto, User } from '@/types/entities';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
-import { User } from '@/types/entities';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const userData = reactive<Partial<User>>({
+const userData = reactive({
   email: '',
   password: '',
 });
 
 const isProcessing = ref(false);
 const isSubmitting = ref(false);
-const formData = ref<User>(new User());
+const formData = ref<CreateUserDto>(new CreateUserDto());
 
 const { showSaveSuccess, showSaveError } = useNotification();
 const { handleLogin } = authorizationStore();
@@ -40,7 +40,7 @@ async function handleAuthorization(): Promise<void> {
 const dialog = usePreferredDialog();
 let registrationDialogRef: ReturnType<typeof dialog.open> | null = null;
 
-function openRegistrationDialog(data: User): void {
+function openRegistrationDialog(data: CreateUserDto): void {
   registrationDialogRef = dialog.open(
     GenericForm,
     {
@@ -59,13 +59,13 @@ function openRegistrationDialog(data: User): void {
   );
 }
 
-async function handleRegistration(data: User): Promise<void> {
+async function handleRegistration(data: CreateUserDto): Promise<void> {
   isSubmitting.value = true;
   Object.assign(formData.value, data);
   formData.value.role = 'user';
 
   try {
-    await store.saveEntity(formData.value);
+    await store.saveEntity(formData.value as unknown as User);
     showSaveSuccess(
       t('login.registrationSuccess'),
       t('login.registrationSuccessDetail', { username: formData.value.username })
@@ -135,7 +135,7 @@ async function handleRegistration(data: User): Promise<void> {
             <span class="text-surface-500">{{ t('login.noAccount') }}</span>
             <a
               class="ml-2 text-primary-500 font-semibold cursor-pointer hover:text-primary-600 hover:underline"
-              @click="() => openRegistrationDialog(new User())"
+              @click="() => openRegistrationDialog(new CreateUserDto())"
             >
               {{ t('login.register') }}
             </a>

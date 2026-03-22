@@ -1,5 +1,4 @@
-import { registerEntityClass } from '@/stores/entity-class-registry';
-import { Book, Loan, User } from '@/types/entities';
+import { configureServices } from '@eleansphere/kniho-hlod-service';
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
 import { createPinia } from 'pinia';
@@ -57,11 +56,13 @@ app.use(ConfirmationService);
 
 useDarkMode();
 
+// Configure services once — all stores use getServices() from here on
+configureServices(
+  'https://kniho-hlod-backend.onrender.com',
+  () => localStorage.getItem('auth-token')
+);
+
 const store = authorizationStore();
 store.initializeAuth();
-
-registerEntityClass('userStore', User);
-registerEntityClass('bookStore', Book);
-registerEntityClass('loanStore', Loan);
 
 app.mount('#app');

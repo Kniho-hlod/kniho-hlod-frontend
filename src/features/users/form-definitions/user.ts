@@ -1,7 +1,7 @@
 import type { FormDefinition } from '@/shared/components/form/types';
-import type { User } from '@/types/entities';
+import { CreateUserDto } from '@/types/entities';
 
-export const userForm: FormDefinition<User> = {
+export const userForm: FormDefinition<CreateUserDto> = {
   fields: [
     {
       name: 'username',

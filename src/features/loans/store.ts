@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from '@/stores/api-end-points';
+import { getServices } from '@eleansphere/kniho-hlod-service';
 import { defineEntityStore } from '@/stores/entity-store';
 import type { Book, Loan, User } from '@/types/entities';
 import type { CreateExtendedEntity } from '@/types/store-definition';
@@ -27,7 +27,13 @@ export const useLoanStore = defineEntityStore<Loan, ExtendLoan>(
     },
   },
   {
-    apiUrl: API_ENDPOINTS.loans,
+    service: {
+      getAll: () => getServices().loans.getAll(),
+      getById: (id) => getServices().loans.getById(id),
+      create: (data) => getServices().loans.create(data),
+      update: (id, data) => getServices().loans.update(id, data),
+      remove: (id) => getServices().loans.delete(id),
+    },
   }
 );
 

@@ -2,7 +2,7 @@ import router from '@/router';
 import type { User } from '@/types/entities';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { API_ENDPOINTS } from './api-end-points';
+import { getServices } from '@eleansphere/kniho-hlod-service';
 import { useBookStore } from '@/features/books/store';
 import { useLoanStore } from '@/features/loans/store';
 import { useUserStore } from '@/features/users/store';
@@ -11,7 +11,6 @@ import { useNotification } from '@/shared/composables/use-notification';
 import { useFileStore } from '@/features/account/store';
 
 export const authorizationStore = defineStore('authorization', () => {
-  const apiUrl = API_ENDPOINTS.userLogin;
   const tokenManager = useTokenManager('auth-token');
   const { showInfo } = useNotification();
 
@@ -20,22 +19,12 @@ export const authorizationStore = defineStore('authorization', () => {
   const actualUsername = ref('');
   const isAuthenticated = ref(false);
   const isAuthInitialized = ref(false);
+
   // Actions
-  async function handleLogin(userCredentials: Partial<User>): Promise<void> {
+  async function handleLogin(userCredentials: { email: string; password: string }): Promise<void> {
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userCredentials),
-      });
-
-      const userData = await response.json();
+      const userData = await getServices().auth.login(userCredentials);
       console.log('📦 Data z response:', userData);
-
-      if (!response.ok) {
-        console.error('❌ Chyba v odpovědi:', userData.error);
-        throw new Error(userData.error);
-      }
 
       tokenManager.setToken(userData.token);
       tokenManager.setTokenExpiration(userData.token, () => {

@@ -3,7 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { authorizationStore } from '@/stores/authorization-store'
 import { useFileStore } from '@/features/account/store'
-import { API_ENDPOINTS } from '@/stores/api-end-points'
+import { getServices } from '@eleansphere/kniho-hlod-service'
 import { formatDate } from '@/shared/utils/date'
 
 const { t } = useI18n()
@@ -16,10 +16,7 @@ onMounted(async () => {
   const imageId = fileStore.entities.find((img) => img.user === loggedUser!.id)?.id
   if (imageId) {
     try {
-      const res = await fetch(`${API_ENDPOINTS.files}/${imageId}/avatar`, {
-        headers: { Authorization: `Bearer ${authorizationStore().getToken()}` },
-      })
-      avatarUrl.value = res.url
+      avatarUrl.value = getServices().files.getFileUrl(imageId)
     } catch {
       // non-critical
     }
