@@ -8,8 +8,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useFormDialog } from '@/shared/composables/use-form-dialog';
 import { useConfirmDialog } from '@/shared/composables/use-confirm-dialog';
-import { USER_ROLE_SEVERITY } from '@/shared/utils/constants/severity';
-import type { UserRole } from '@/features/users/constants';
+import UserCard from '@/features/users/components/UserCard.vue';
 
 const { t } = useI18n();
 const store = useUserStore();
@@ -144,45 +143,13 @@ onMounted(() => {
     </div>
 
     <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
+      <UserCard
         v-for="user in filteredUsers"
         :key="user.id"
-        class="bg-surface-0 rounded-xl shadow-sm border border-surface-100 p-4 flex flex-col gap-3"
-      >
-        <!-- User info -->
-        <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-full bg-surface-100 flex items-center justify-center shrink-0"
-          >
-            <i class="pi pi-user text-surface-500"></i>
-          </div>
-          <div class="min-w-0 flex-1">
-            <p class="font-semibold text-surface-800 truncate">{{ user.username }}</p>
-            <p class="text-surface-400 text-xs truncate">{{ user.email }}</p>
-          </div>
-          <Tag :severity="USER_ROLE_SEVERITY[user.role as UserRole]" :value="user.role" class="shrink-0" />
-        </div>
-
-        <!-- Actions -->
-        <div class="flex gap-2 pt-1 border-t border-surface-100">
-          <Button
-            icon="pi pi-pencil"
-            size="small"
-            outlined
-            severity="secondary"
-            class="flex-1"
-            @click="openDialog(user as User)"
-          />
-          <Button
-            icon="pi pi-trash"
-            size="small"
-            outlined
-            severity="danger"
-            class="flex-1"
-            @click="deleteUser(user as User)"
-          />
-        </div>
-      </div>
+        :user="(user as User)"
+        @edit="openDialog"
+        @delete="deleteUser"
+      />
     </div>
   </div>
 </template>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
-import type { ExtendedBook } from '@/features/books/store';
-import { getLoansForBook } from '@/features/loans/store';
-import { MS_PER_DAY } from '@/features/loans/constants';
-import { BOOK_AVAILABILITY_SEVERITY } from '@/shared/utils/constants/severity';
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import type { ExtendedBook } from '@/features/books/store'
+import { getLoansForBook } from '@/features/loans/store'
+import { MS_PER_DAY } from '@/features/loans/constants'
+import { BOOK_AVAILABILITY_SEVERITY } from '@/shared/utils/constants/severity'
+import GenericCard from '@/shared/components/card/GenericCard.vue'
+import type { CardBadge } from '@/shared/components/card/types'
 
 const props = defineProps<{
   book: ExtendedBook
@@ -32,66 +34,35 @@ const overdueDays = computed(() => {
   return Math.floor((Date.now() - new Date(activeLoan.value.returnDate).getTime()) / MS_PER_DAY)
 })
 
-const statusLabel = computed(() => {
-  if (!activeLoan.value) return t('status.available')
-  if (isOverdue.value) return t('status.overdue', { days: overdueDays.value })
-  return t('books.loanedTo', { name: activeLoan.value.borrower })
+const actions = computed(() => [
+  { icon: 'pi pi-pencil', severity: 'secondary' as const, onClick: () => emit('edit', props.book) },
+  { icon: 'pi pi-trash', severity: 'danger' as const, onClick: () => emit('delete', props.book) },
+])
+
+const badge = computed<CardBadge>(() => {
+  if (!activeLoan.value) {
+    return { label: t('status.available'), severity: BOOK_AVAILABILITY_SEVERITY.available }
+  }
+  if (isOverdue.value) {
+    return {
+      label: t('status.overdue', { days: overdueDays.value }),
+      severity: BOOK_AVAILABILITY_SEVERITY.overdue,
+      icon: 'pi pi-exclamation-triangle',
+    }
+  }
+  return {
+    label: t('books.loanedTo', { name: activeLoan.value.borrower }),
+    severity: BOOK_AVAILABILITY_SEVERITY.lent,
+  }
 })
 </script>
 
 <template>
-  <div
-    class="bg-surface-0 rounded-xl shadow-sm border border-surface-100 p-4 flex flex-col gap-3 hover:shadow-md transition-shadow cursor-pointer"
-    @click="emit('edit', book)"
-  >
-    <!-- Icon + year -->
-    <div class="flex items-start justify-between">
-      <div class="w-10 h-10 bg-surface-100 rounded-lg flex items-center justify-center">
-        <i class="pi pi-book text-surface-500"></i>
-      </div>
-      <span v-if="book.publicationYear" class="text-xs text-surface-400 font-medium">
-        {{ book.publicationYear }}
-      </span>
-    </div>
-
-    <!-- Title & Author -->
-    <div class="flex-1">
-      <h3 class="font-bold text-surface-800 leading-tight line-clamp-2">{{ book.title }}</h3>
-      <p v-if="book.author" class="text-surface-500 text-sm mt-0.5">{{ book.author }}</p>
-    </div>
-
-    <!-- Status badge -->
-    <Tag
-      :value="statusLabel"
-      :severity="isOverdue ? BOOK_AVAILABILITY_SEVERITY.overdue : !activeLoan ? BOOK_AVAILABILITY_SEVERITY.available : BOOK_AVAILABILITY_SEVERITY.lent"
-      class="self-start"
-    >
-      <template #default>
-        <span class="flex items-center gap-1">
-          <i v-if="isOverdue" class="pi pi-exclamation-triangle text-xs"></i>
-          {{ statusLabel }}
-        </span>
-      </template>
-    </Tag>
-
-    <!-- Actions -->
-    <div class="flex gap-2 pt-1 border-t border-surface-100" @click.stop>
-      <Button
-        icon="pi pi-pencil"
-        size="small"
-        outlined
-        severity="secondary"
-        class="flex-1"
-        @click="emit('edit', book)"
-      />
-      <Button
-        icon="pi pi-trash"
-        size="small"
-        outlined
-        severity="danger"
-        class="flex-1"
-        @click="emit('delete', book)"
-      />
-    </div>
-  </div>
+  <GenericCard
+    :title="book.title"
+    :subtitle="book.author"
+    icon="pi pi-book"
+    :badge="badge"
+    :actions="actions"
+  />
 </template>
