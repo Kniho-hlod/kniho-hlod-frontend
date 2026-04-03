@@ -32,3 +32,4 @@ coverage
 
 # Generated Files
 components.d.ts
+.claude
