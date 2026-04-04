@@ -2,6 +2,7 @@ import type { FormDefinition } from '@/shared/components/form/types';
 import { Book } from '@/types/entities';
 
 export const bookForm: FormDefinition<Book> = {
+  gridClass: 'grid grid-cols-2 gap-4',
   fields: [
     {
       name: 'title',
@@ -9,6 +10,7 @@ export const bookForm: FormDefinition<Book> = {
       type: 'text',
       required: true,
       placeholder: 'Zadejte název knihy',
+      colClass: 'col-span-1',
       validators: [
         (value) => (value && value.length < 3 ? 'Název musí mít alespoň 3 znaky' : null),
         (value) => (value && value.length > 100 ? 'Název nesmí být delší než 100 znaků' : null),
@@ -20,6 +22,7 @@ export const bookForm: FormDefinition<Book> = {
       type: 'text',
       required: true,
       placeholder: 'Zadejte jméno autora',
+      colClass: 'col-span-1',
       validators: [
         (value) => (value && value.length < 2 ? 'Jméno autora musí mít alespoň 2 znaky' : null),
       ],
@@ -30,12 +33,14 @@ export const bookForm: FormDefinition<Book> = {
       type: 'textarea',
       placeholder: 'Zadejte popis knihy',
       hint: 'Nepovinný popis knihy pro lepší identifikaci',
+      colClass: 'col-span-2',
     },
     {
       name: 'publicationYear',
       label: 'Rok vydání',
       type: 'number',
       placeholder: 'Zadejte rok vydání',
+      colClass: 'col-span-1',
       validators: [
         (value) =>
           value && (value < 1000 || value > new Date().getFullYear())
@@ -52,6 +57,7 @@ export const bookForm: FormDefinition<Book> = {
         { label: 'Ne', value: false },
       ],
       required: true,
+      colClass: 'col-span-1',
       validators: [(value) => (value === undefined ? 'Musíte vybrat dostupnost' : null)],
     },
   ],

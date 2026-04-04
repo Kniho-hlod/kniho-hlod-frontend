@@ -4,11 +4,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { authorizationStore } from '@/stores/authorization-store';
 import { getActiveLoans } from '@/features/loans/store';
-import { useFileStore } from '@/features/account/store';
-import { getServices } from '@eleansphere/kniho-hlod-service';
 import { setLocale } from '@/i18n';
 import { useDarkMode } from '@/shared/composables/use-dark-mode';
-import { onMounted } from 'vue';
+import { useAvatarUrl } from '@/shared/composables/use-avatar-url';
 
 const router = useRouter();
 const route = useRoute();
@@ -30,7 +28,7 @@ const allNavItems: NavItem[] = [
     label: () => t('nav.loans'),
     icon: 'pi pi-address-book',
     route: '/home/loans',
-    badge: () => getActiveLoans(loggedUser!.id).length,
+    badge: () => getActiveLoans().length,
   },
   { label: () => t('nav.books'), icon: 'pi pi-book', route: '/home/books' },
   { label: () => t('nav.notifications'), icon: 'pi pi-bell', route: '/home/notifications' },
@@ -55,19 +53,7 @@ function navigate(itemRoute: string) {
 }
 
 // Avatar
-const avatarUrl = ref<string | undefined>(undefined);
-
-onMounted(async () => {
-  const fileStore = useFileStore();
-  const imageId = fileStore.entities.find((img) => img.user === loggedUser!.id)?.id;
-  if (imageId) {
-    try {
-      avatarUrl.value = getServices().files.getFileUrl(imageId);
-    } catch {
-      // non-critical
-    }
-  }
-});
+const avatarUrl = useAvatarUrl(loggedUser?.id);
 </script>
 
 <template>
@@ -108,8 +94,8 @@ onMounted(async () => {
       <div class="border-t border-surface-700 p-3">
         <div class="flex items-center gap-2 px-2 py-2 mb-1">
           <Avatar
-            :image="avatarUrl"
-            icon="pi pi-user"
+            :image="avatarUrl || undefined"
+            :icon="avatarUrl ? undefined : 'pi pi-user'"
             shape="circle"
             size="small"
             class="shrink-0"
@@ -183,7 +169,7 @@ onMounted(async () => {
             @click="toggle"
             :aria-label="t('topbar.toggleDark')"
           />
-          <Avatar :image="avatarUrl" icon="pi pi-user" shape="circle" size="small" />
+          <Avatar :image="avatarUrl || undefined" :icon="avatarUrl ? undefined : 'pi pi-user'" shape="circle" size="small" />
         </div>
       </header>
 
@@ -204,7 +190,7 @@ onMounted(async () => {
 
       <!-- User info -->
       <div class="flex items-center gap-3 py-3 mb-2 border-b border-surface-200">
-        <Avatar :image="avatarUrl" icon="pi pi-user" shape="circle" class="shrink-0" />
+        <Avatar :image="avatarUrl || undefined" :icon="avatarUrl ? undefined : 'pi pi-user'" shape="circle" class="shrink-0" />
         <div>
           <p class="font-medium text-surface-700 text-sm">{{ loggedUser?.username }}</p>
           <p class="text-surface-400 text-xs">{{ loggedUser?.email }}</p>

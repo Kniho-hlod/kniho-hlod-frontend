@@ -17,25 +17,25 @@ import { getOverdueLoans } from '@/features/loans/store';
 
 const { t } = useI18n();
 const { loggedUser } = authorizationStore();
-const haveLoans = computed(() => Boolean(getActiveLoans(loggedUser!.id).length));
+const haveLoans = computed(() => Boolean(getActiveLoans().length));
 
 const overviewStats = computed(() => [
   {
     label: t('overview.statBooks'),
     color: 'var(--p-primary-500)',
-    value: getAllBooks(loggedUser!.id).length,
+    value: getAllBooks().length,
     icon: 'pi pi-book',
   },
   {
     label: t('overview.statActiveLoans'),
     color: 'var(--p-primary-400)',
-    value: getActiveLoans(loggedUser!.id).length,
+    value: getActiveLoans().length,
     icon: 'pi pi-address-book',
   },
   {
     label: t('overview.statOverdue'),
     color: 'var(--p-red-500)',
-    value: getOverdueLoans(loggedUser!.id).length,
+    value: getOverdueLoans().length,
     icon: 'pi pi-exclamation-triangle',
   },
 ]);
@@ -64,7 +64,7 @@ const overviewStats = computed(() => [
 
     <!-- Overdue alert -->
     <Message v-if="overdueLoans.length > 0" severity="error" :closable="false">
-      <template #messageicon>
+      <template #icon>
         <i class="pi pi-exclamation-triangle" />
       </template>
       <div>

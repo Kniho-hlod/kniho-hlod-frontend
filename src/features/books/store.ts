@@ -1,4 +1,4 @@
-import { getServices } from '@eleansphere/kniho-hlod-service';
+import { getServices } from '@kniho-hlod/kniho-hlod-service';
 import { defineEntityStore } from '@/stores/entity-store';
 import type { Book } from '@/types/entities';
 import type { CreateExtendedEntity } from '@/types/store-definition';
@@ -21,6 +21,6 @@ export const useBookStore = defineEntityStore<Book, ExtendBook>(
   }
 );
 
-export function getAllBooks(userId: string): Array<ExtendedBook> {
-  return useBookStore().entities.filter((book) => book.ownerId === userId);
+export function getAllBooks(): Array<ExtendedBook> {
+  return useBookStore().entities;
 }

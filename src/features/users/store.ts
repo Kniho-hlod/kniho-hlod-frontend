@@ -1,4 +1,4 @@
-import { getServices } from '@eleansphere/kniho-hlod-service';
+import { getServices } from '@kniho-hlod/kniho-hlod-service';
 import { defineEntityStore } from '@/stores/entity-store';
 import type { User } from '@/types/entities';
 import type { CreateExtendedEntity } from '@/types/store-definition';

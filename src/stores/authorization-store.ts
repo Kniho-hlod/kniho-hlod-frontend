@@ -2,7 +2,7 @@ import router from '@/router';
 import type { User } from '@/types/entities';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import { getServices } from '@eleansphere/kniho-hlod-service';
+import { getServices } from '@kniho-hlod/kniho-hlod-service';
 import { useBookStore } from '@/features/books/store';
 import { useLoanStore } from '@/features/loans/store';
 import { useUserStore } from '@/features/users/store';

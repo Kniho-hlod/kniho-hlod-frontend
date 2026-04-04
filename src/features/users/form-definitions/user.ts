@@ -2,12 +2,14 @@ import type { FormDefinition } from '@/shared/components/form/types';
 import { CreateUserDto } from '@/types/entities';
 
 export const userForm: FormDefinition<CreateUserDto> = {
+  gridClass: 'grid grid-cols-2 gap-4',
   fields: [
     {
       name: 'username',
       label: 'Uživatelské jméno',
       type: 'text',
       required: true,
+      colClass: 'col-span-1',
       validators: [
         (value) => (value && value.length < 3 ? 'Uživatelské jméno mít alespoň 3 znaky' : null),
         (value) =>
@@ -15,35 +17,31 @@ export const userForm: FormDefinition<CreateUserDto> = {
       ],
     },
     {
-      name: 'password',
-      label: 'Heslo',
-      type: 'password',
-      required: true,
-      validators: [
-        (value) => (value && value.length < 6 ? ' Heslo musí mít alespoň 6 znaků' : null),
-      ],
-    },
-    {
       name: 'email',
       label: 'Email',
       type: 'email',
       required: true,
+      colClass: 'col-span-1',
+    },
+    {
+      name: 'password',
+      label: 'Heslo',
+      type: 'password',
+      required: true,
+      colClass: 'col-span-1',
+      validators: [
+        (value) => (value && value.length < 6 ? 'Heslo musí mít alespoň 6 znaků' : null),
+      ],
     },
     {
       name: 'role',
       label: 'Uživatelská role',
       type: 'select',
       required: true,
+      colClass: 'col-span-1',
       options: [
-        {
-          label: 'Administrátor',
-          value: 'admin',
-        },
-
-        {
-          label: 'Uživatel',
-          value: 'user',
-        },
+        { label: 'Administrátor', value: 'admin' },
+        { label: 'Uživatel', value: 'user' },
       ],
     },
   ],

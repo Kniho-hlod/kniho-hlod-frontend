@@ -43,7 +43,6 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
         (value, formData) =>
           formData && value !== formData.password ? 'Hesla se neshodují' : null,
       ],
-      //nefunguje při použití useFormState, protože formData není dostupné v tomto kontextu
     },
   ],
   submitLabel: 'Registrovat',

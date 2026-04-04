@@ -16,10 +16,10 @@ const { t } = useI18n();
 const store = useLoanStore();
 const { loggedUser } = authorizationStore();
 
-const activeLoans = computed<Array<ExtendedLoan>>(() => getActiveLoans(loggedUser!.id));
+const activeLoans = computed<Array<ExtendedLoan>>(() => getActiveLoans());
 
 const archivedLoans = computed<Array<ExtendedLoan>>(() =>
-  store.entities.filter((loan) => loan.ownerId === loggedUser?.id && loan.isReturned)
+  store.entities.filter((loan) => loan.isReturned)
 );
 
 const bookStore = useBookStore();
@@ -43,6 +43,7 @@ const editedLoanForm = computed<FormDefinition<Loan>>(() => ({
       required: true,
       placeholder: t('loans.selectBook'),
       options: availableBooks.value,
+      colClass: 'col-span-2',
     },
     ...loanForm.fields,
   ],

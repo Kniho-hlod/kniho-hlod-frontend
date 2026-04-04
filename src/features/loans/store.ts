@@ -1,10 +1,9 @@
-import { getServices } from '@eleansphere/kniho-hlod-service';
+import { getServices } from '@kniho-hlod/kniho-hlod-service';
 import { defineEntityStore } from '@/stores/entity-store';
 import type { Book, Loan, User } from '@/types/entities';
 import type { CreateExtendedEntity } from '@/types/store-definition';
 import { useBookStore } from '@/features/books/store';
 import { useUserStore } from '@/features/users/store';
-import { authorizationStore } from '@/stores/authorization-store';
 import { sortBy } from '@/shared/utils/date';
 
 type ExtendLoan = {
@@ -37,37 +36,27 @@ export const useLoanStore = defineEntityStore<Loan, ExtendLoan>(
   }
 );
 
-export function getAllLoans(userId: string): Array<ExtendedLoan> {
-  const store = useLoanStore();
-  return store.entities.filter((loan) => loan.ownerId === userId);
+export function getAllLoans(): Array<ExtendedLoan> {
+  return useLoanStore().entities;
 }
 
-export function getActiveLoans(userId: string): Array<ExtendedLoan> {
-  const store = useLoanStore();
-  return store.entities.filter((loan) => loan.ownerId === userId && !loan.isReturned);
+export function getActiveLoans(): Array<ExtendedLoan> {
+  return useLoanStore().entities.filter((loan) => !loan.isReturned);
 }
 
 export function getLatestLoan(): ExtendedLoan {
-  const { loggedUser } = authorizationStore();
-  const activeLoans = getActiveLoans(loggedUser!.id);
-  return sortBy(activeLoans, 'createdAt')[0];
+  return sortBy(getActiveLoans(), 'createdAt')[0];
 }
 
 export function getEarliestLoanReturn(): ExtendedLoan {
-  const { loggedUser } = authorizationStore();
-  const activeLoans = getActiveLoans(loggedUser!.id);
-  return sortBy(activeLoans, 'returnDate')[0];
+  return sortBy(getActiveLoans(), 'returnDate')[0];
 }
 
-export function getOverdueLoans(userId: string): ExtendedLoan[] {
-  const store = useLoanStore();
+export function getOverdueLoans(): ExtendedLoan[] {
   const today = new Date();
-  return store.entities.filter(
+  return useLoanStore().entities.filter(
     (loan) =>
-      loan.ownerId === userId &&
-      !loan.isReturned &&
-      loan.returnDate != null &&
-      new Date(loan.returnDate) < today,
+      !loan.isReturned && loan.returnDate != null && new Date(loan.returnDate) < today,
   );
 }
 

@@ -1,41 +1,73 @@
-export type FieldType =
-  | 'text'
-  | 'number'
-  | 'email'
-  | 'password'
-  | 'select'
-  | 'date'
-  | 'checkbox'
-  | 'radio'
-  | 'textarea';
+export type FieldValidator<T = any> = (value: any, formData: T) => string | null;
 
-export interface FormFieldDefinition<T> {
+interface BaseFieldDef<T> {
   name: keyof T & string;
   label: string;
-  type: FieldType;
   required?: boolean;
-  placeholder?: string;
   hint?: string;
-  options?: Array<{ label: string; value: any }>;
   validators?: FieldValidator<T>[];
-  hidden?: boolean;
+  hidden?: boolean | ((model: T) => boolean);
   disabled?: (model: T) => boolean;
-  dependsOn?: Array<keyof T & string>;
+  colClass?: string;
 }
+
+export interface TextFieldDef<T> extends BaseFieldDef<T> {
+  type: 'text' | 'email';
+  placeholder?: string;
+}
+
+export interface PasswordFieldDef<T> extends BaseFieldDef<T> {
+  type: 'password';
+  placeholder?: string;
+}
+
+export interface NumberFieldDef<T> extends BaseFieldDef<T> {
+  type: 'number';
+  placeholder?: string;
+  min?: number;
+  max?: number;
+}
+
+export interface SelectFieldDef<T> extends BaseFieldDef<T> {
+  type: 'select';
+  options: Array<{ label: string; value: any }>;
+  placeholder?: string;
+}
+
+export interface DateFieldDef<T> extends BaseFieldDef<T> {
+  type: 'date';
+  dateFormat?: string;
+  placeholder?: string;
+}
+
+export interface TextareaFieldDef<T> extends BaseFieldDef<T> {
+  type: 'textarea';
+  placeholder?: string;
+  rows?: number;
+}
+
+export interface CheckboxFieldDef<T> extends BaseFieldDef<T> {
+  type: 'checkbox';
+}
+
+export interface CustomFieldDef<T> extends BaseFieldDef<T> {
+  type: 'custom';
+}
+
+export type FormFieldDefinition<T> =
+  | TextFieldDef<T>
+  | PasswordFieldDef<T>
+  | NumberFieldDef<T>
+  | SelectFieldDef<T>
+  | DateFieldDef<T>
+  | TextareaFieldDef<T>
+  | CheckboxFieldDef<T>
+  | CustomFieldDef<T>;
 
 export interface FormDefinition<T> {
   fields: Array<FormFieldDefinition<T>>;
+  gridClass?: string;
   submitLabel?: string;
   cancelLabel?: string;
   showCancel?: boolean;
 }
-
-export interface FormState<T> {
-  model: T;
-  errors: Partial<Record<keyof T, string>>;
-  touched: Partial<Record<keyof T, boolean>>;
-  isSubmitting: boolean;
-  isValid: boolean;
-}
-
-export type FieldValidator<T = any> = (value: any, formData?: T) => string | null;

@@ -9,7 +9,7 @@ const { t } = useI18n();
 </script>
 
 <template>
-  <div class="grid gap-4 max-w-2xl">
+  <div class="grid gap-4">
     <div>
       <h1 class="text-2xl font-bold text-surface-800">{{ t('account.title') }}</h1>
       <p class="text-surface-500 text-sm">{{ t('account.subtitle') }}</p>

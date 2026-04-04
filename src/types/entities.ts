@@ -18,13 +18,13 @@ export {
   CreateProfileImageDto,
   LoginRequest,
   LoginResponse,
-} from '@eleansphere/kniho-hlod-service';
+} from '@kniho-hlod/kniho-hlod-service';
 
 export type { UserRole };
 
-export type Entity = import('@eleansphere/kniho-hlod-service').UserDto
-  | import('@eleansphere/kniho-hlod-service').BookDto
-  | import('@eleansphere/kniho-hlod-service').LoanDto;
+export type Entity = import('@kniho-hlod/kniho-hlod-service').UserDto
+  | import('@kniho-hlod/kniho-hlod-service').BookDto
+  | import('@kniho-hlod/kniho-hlod-service').LoanDto;
 
 export interface EntityWithIndex {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

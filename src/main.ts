@@ -1,4 +1,5 @@
-import { configureServices } from '@eleansphere/kniho-hlod-service';
+import { configureServices } from '@kniho-hlod/kniho-hlod-service';
+import { jwtDecode } from 'jwt-decode';
 import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
 import { createPinia } from 'pinia';
@@ -57,9 +58,19 @@ app.use(ConfirmationService);
 useDarkMode();
 
 // Configure services once — all stores use getServices() from here on
+// For development, you can set the backend URL to http://localhost:3000 and use the local backend
 configureServices(
   'https://kniho-hlod-backend.onrender.com',
-  () => localStorage.getItem('auth-token')
+  () => localStorage.getItem('auth-token'),
+  () => {
+    const token = localStorage.getItem('auth-token');
+    if (!token) return null;
+    try {
+      return jwtDecode<{ id: string }>(token).id ?? null;
+    } catch {
+      return null;
+    }
+  }
 );
 
 const store = authorizationStore();

@@ -18,7 +18,6 @@ const userData = reactive({
 
 const isProcessing = ref(false);
 const isSubmitting = ref(false);
-const formData = ref<CreateUserDto>(new CreateUserDto());
 
 const { showSaveSuccess, showSaveError } = useNotification();
 const { handleLogin } = authorizationStore();
@@ -48,7 +47,6 @@ function openRegistrationDialog(data: CreateUserDto): void {
       modelValue: data,
       mode: 'create',
       submitting: isSubmitting.value,
-      'onUpdate:modelValue': (val) => (formData.value = val),
       onSubmit: handleRegistration,
     },
     {
@@ -59,25 +57,26 @@ function openRegistrationDialog(data: CreateUserDto): void {
   );
 }
 
-async function handleRegistration(data: CreateUserDto): Promise<void> {
+async function handleRegistration(values: CreateUserDto): Promise<void> {
   isSubmitting.value = true;
-  Object.assign(formData.value, data);
-  formData.value.role = 'user';
+  registrationDialogRef?.updateProps({ submitting: true });
+  const payload = { ...values, role: 'user' as const };
 
   try {
-    await store.saveEntity(formData.value as unknown as User);
+    await store.saveEntity(payload as unknown as User);
     showSaveSuccess(
       t('login.registrationSuccess'),
-      t('login.registrationSuccessDetail', { username: formData.value.username })
+      t('login.registrationSuccessDetail', { username: payload.username })
     );
     registrationDialogRef?.close();
   } catch (error) {
     showSaveError(
       t('login.registrationError'),
-      t('login.registrationErrorDetail', { username: formData.value.username })
+      t('login.registrationErrorDetail', { username: payload.username })
     );
   } finally {
     isSubmitting.value = false;
+    registrationDialogRef?.updateProps({ submitting: false });
   }
 }
 </script>
