@@ -5,15 +5,16 @@ import { formatDate } from '@/shared/utils/date';
 import StatCard from '@/features/overview/components/StatCard.vue';
 import OverdueCard from '@/features/overview/components/OverdueCard.vue';
 import InfoCard from '@/features/overview/components/InfoCard.vue';
-import { overdueLoans, lastBorrowedBook, earliestLoanReturn } from '../overview-stats-definition';
 import { authorizationStore } from '@/stores/authorization-store';
-import { getActiveLoans, getAllLoans } from '@/features/loans/store';
+import { getActiveLoans, getOverdueLoans, getLatestLoan, getEarliestLoanReturn } from '@/features/loans/store';
 import { getAllBooks } from '@/features/books/store';
-import { getOverdueLoans } from '@/features/loans/store';
 
 const { t } = useI18n();
 const { loggedUser } = authorizationStore();
 const haveLoans = computed(() => Boolean(getActiveLoans().length));
+const overdueLoans = computed(() => getOverdueLoans());
+const lastBorrowedBook = computed(() => getLatestLoan());
+const earliestLoanReturn = computed(() => getEarliestLoanReturn());
 
 const overviewStats = computed(() => [
   {
