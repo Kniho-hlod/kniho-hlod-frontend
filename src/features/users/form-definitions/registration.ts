@@ -8,13 +8,6 @@ type RegistrationUser = CreateUserDto & {
 export const registrationForm: FormDefinition<RegistrationUser> = {
   fields: [
     {
-      name: 'username',
-      label: 'Uživatelské jméno',
-      type: 'text',
-      required: true,
-      hint: 'Slouží pouze k oslovení.',
-    },
-    {
       name: 'email',
       label: 'Email',
       type: 'email',
@@ -24,6 +17,13 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
         (value) =>
           value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Zadejte platný email' : null,
       ],
+    },
+        {
+      name: 'username',
+      label: 'Uživatelské jméno',
+      type: 'text',
+      required: true,
+      hint: 'Slouží pouze k oslovení.',
     },
     {
       name: 'password',
@@ -48,4 +48,9 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
   submitLabel: 'Registrovat',
   cancelLabel: 'Zrušit',
   showCancel: true,
+  canSubmit: (values) =>
+    !!values.password &&
+    values.password.length >= 8 &&
+    !!values.confirmPassword &&
+    values.password === values.confirmPassword,
 };

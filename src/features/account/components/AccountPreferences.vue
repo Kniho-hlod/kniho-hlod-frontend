@@ -30,7 +30,9 @@ function savePreferences() {
   <div class="grid gap-5">
     <!-- Timezone -->
     <div>
-      <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.timezone') }}</label>
+      <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+        {{ t('account.timezone') }}
+      </label>
       <Select
         v-model="timezone"
         :options="timezoneOptions"
@@ -77,11 +79,7 @@ function savePreferences() {
     </div>
 
     <div class="flex justify-end">
-      <Button
-        :label="t('account.savePreferences')"
-        icon="pi pi-check"
-        @click="savePreferences"
-      />
+      <Button :label="t('account.savePreferences')" icon="pi pi-check" @click="savePreferences" />
     </div>
   </div>
 </template>

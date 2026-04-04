@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { TextFieldDef } from '../types';
+import type { PasswordFieldDef } from '../types';
 
 defineProps<{
-  field: TextFieldDef<any>;
+  field: PasswordFieldDef<any>;
   fieldState: any;
   disabled: boolean;
 }>();
@@ -10,14 +10,15 @@ defineProps<{
 
 <template>
   <IftaLabel>
-    <InputText
+    <Password
       :id="field.name"
       v-bind="fieldState"
-      :type="field.type"
       :placeholder="field.placeholder"
       :disabled="disabled"
       :invalid="fieldState.invalid"
       variant="filled"
+      :feedback="field.feedback ?? false"
+      :toggleMask="field.toggleMask ?? true"
       fluid
     />
     <label :for="field.name">{{ field.label }}</label>

@@ -112,7 +112,11 @@ const activeTab = ref<LoanTab>(LOAN_TAB.ACTIVE);
         <span
           v-if="activeLoans.length"
           class="ml-1.5 text-xs px-1.5 py-0.5 rounded-full"
-          :class="activeTab === LOAN_TAB.ACTIVE ? 'bg-white/25 text-white' : 'bg-primary-100 text-primary-700'"
+          :class="
+            activeTab === LOAN_TAB.ACTIVE
+              ? 'bg-white/25 text-white'
+              : 'bg-primary-100 text-primary-700'
+          "
         >
           {{ activeLoans.length }}
         </span>

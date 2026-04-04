@@ -49,7 +49,9 @@ function submitPasswordChange() {
         <div>
           <p class="font-medium text-surface-700 text-sm">{{ t('account.password') }}</p>
           <p class="text-surface-400 text-xs">
-            {{ t('account.passwordLastChanged', { date: formatDate(loggedUser?.updatedAt) || '—' }) }}
+            {{
+              t('account.passwordLastChanged', { date: formatDate(loggedUser?.updatedAt) || '—' })
+            }}
           </p>
         </div>
         <Button
@@ -66,7 +68,9 @@ function submitPasswordChange() {
       <Transition name="slide-down">
         <div v-if="showPasswordForm" class="mt-4 grid gap-3 border-t border-surface-200 pt-4">
           <div>
-            <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.newPassword') }}</label>
+            <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+              {{ t('account.newPassword') }}
+            </label>
             <InputText
               v-model="newPassword"
               type="password"
@@ -75,7 +79,9 @@ function submitPasswordChange() {
             />
           </div>
           <div>
-            <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.confirmPassword') }}</label>
+            <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+              {{ t('account.confirmPassword') }}
+            </label>
             <InputText
               v-model="confirmPassword"
               type="password"

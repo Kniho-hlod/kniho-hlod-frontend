@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import type { ExtendedLoan } from '@/features/loans/store'
-import { MS_PER_DAY } from '@/features/loans/constants'
-import { formatDate } from '@/shared/utils/date'
+import { useI18n } from 'vue-i18n';
+import type { ExtendedLoan } from '@/features/loans/store';
+import { MS_PER_DAY } from '@/features/loans/constants';
+import { formatDate } from '@/shared/utils/date';
 
 defineProps<{
-  loan: ExtendedLoan
-}>()
+  loan: ExtendedLoan;
+}>();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 function overdueDays(returnDate: Date | string): number {
-  return Math.floor((Date.now() - new Date(returnDate).getTime()) / MS_PER_DAY)
+  return Math.floor((Date.now() - new Date(returnDate).getTime()) / MS_PER_DAY);
 }
 </script>
 

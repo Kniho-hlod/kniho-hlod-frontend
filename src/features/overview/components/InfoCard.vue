@@ -1,12 +1,12 @@
 <script setup lang="ts">
 defineProps<{
-  titleKey: string
-  icon: string
-  bookTitle: string
-  borrower: string
-  date: string
-  dateLabel: string
-}>()
+  titleKey: string;
+  icon: string;
+  bookTitle: string;
+  borrower: string;
+  date: string;
+  dateLabel: string;
+}>();
 </script>
 
 <template>

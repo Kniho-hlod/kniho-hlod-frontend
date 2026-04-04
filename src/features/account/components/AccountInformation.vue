@@ -51,7 +51,11 @@ async function saveProfile() {
   if (!loggedUser?.id) return;
   isSaving.value = true;
   try {
-    await userStore.saveEntity({ ...loggedUser, username: editUsername.value, email: editEmail.value });
+    await userStore.saveEntity({
+      ...loggedUser,
+      username: editUsername.value,
+      email: editEmail.value,
+    });
     if (selectedFile.value) {
       await uploadAvatar();
     }
@@ -62,7 +66,6 @@ async function saveProfile() {
     isSaving.value = false;
   }
 }
-
 </script>
 
 <template>
@@ -70,7 +73,13 @@ async function saveProfile() {
     <div class="p-4 bg-surface-50 rounded-xl">
       <p class="text-surface-700 font-medium text-sm mb-2">{{ t('account.avatar') }}</p>
       <div class="flex items-center gap-2 flex-wrap">
-        <input type="file" accept="image/*" @change="onFileSelect" class="hidden" id="avatarInput" />
+        <input
+          type="file"
+          accept="image/*"
+          @change="onFileSelect"
+          class="hidden"
+          id="avatarInput"
+        />
         <label
           for="avatarInput"
           class="px-3 py-1.5 text-sm border border-surface-200 rounded-lg cursor-pointer text-surface-600 hover:bg-surface-0 transition-colors"
@@ -84,15 +93,21 @@ async function saveProfile() {
 
     <div class="grid gap-4">
       <div>
-        <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.username') }}</label>
+        <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+          {{ t('account.username') }}
+        </label>
         <InputText v-model="editUsername" fluid />
       </div>
       <div>
-        <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.email') }}</label>
+        <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+          {{ t('account.email') }}
+        </label>
         <InputText v-model="editEmail" type="email" fluid />
       </div>
       <div>
-        <label class="block text-surface-700 font-medium mb-1.5 text-sm">{{ t('account.registeredAt') }}</label>
+        <label class="block text-surface-700 font-medium mb-1.5 text-sm">
+          {{ t('account.registeredAt') }}
+        </label>
         <InputText :value="formatDate(loggedUser?.createdAt) || '—'" disabled fluid />
       </div>
     </div>

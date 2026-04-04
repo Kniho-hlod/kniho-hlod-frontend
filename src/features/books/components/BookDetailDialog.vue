@@ -6,12 +6,12 @@ import { getLoansForBook } from '@/features/loans/store';
 import { formatDate } from '@/shared/utils/date';
 
 const props = defineProps<{
-  book: ExtendedBook
-}>()
+  book: ExtendedBook;
+}>();
 
-const { t } = useI18n()
+const { t } = useI18n();
 
-const loans = computed(() => getLoansForBook(props.book.id))
+const loans = computed(() => getLoansForBook(props.book.id));
 </script>
 
 <template>

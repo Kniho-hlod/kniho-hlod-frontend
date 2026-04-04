@@ -1,10 +1,10 @@
 <script setup lang="ts">
 defineProps<{
-  label: string
-  value: number
-  color: string
-  icon: string
-}>()
+  label: string;
+  value: number;
+  color: string;
+  icon: string;
+}>();
 </script>
 
 <template>
@@ -12,7 +12,9 @@ defineProps<{
     <template #content>
       <div class="flex items-center justify-between">
         <div>
-          <p class="text-surface-500 text-xs font-medium uppercase tracking-wide mb-1">{{ label }}</p>
+          <p class="text-surface-500 text-xs font-medium uppercase tracking-wide mb-1">
+            {{ label }}
+          </p>
           <p class="text-3xl font-bold" :style="{ color }">{{ value }}</p>
         </div>
         <span

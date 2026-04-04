@@ -19,6 +19,8 @@ export interface TextFieldDef<T> extends BaseFieldDef<T> {
 export interface PasswordFieldDef<T> extends BaseFieldDef<T> {
   type: 'password';
   placeholder?: string;
+  feedback?: boolean;
+  toggleMask?: boolean;
 }
 
 export interface NumberFieldDef<T> extends BaseFieldDef<T> {
@@ -70,4 +72,5 @@ export interface FormDefinition<T> {
   submitLabel?: string;
   cancelLabel?: string;
   showCancel?: boolean;
+  canSubmit?: (values: Partial<T>) => boolean;
 }

@@ -6,7 +6,7 @@ import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
 import { CreateUserDto, User } from '@/types/entities';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -18,6 +18,8 @@ const userData = reactive({
 
 const isProcessing = ref(false);
 const isSubmitting = ref(false);
+
+const canLogin = computed(() => userData.email.trim() !== '' && userData.password.trim() !== '');
 
 const { showSaveSuccess, showSaveError } = useNotification();
 const { handleLogin } = authorizationStore();
@@ -84,18 +86,18 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
 <template>
   <div class="flex items-center justify-center min-h-dvh bg-hlod bg-cover bg-center bg-no-repeat">
     <div class="w-full max-w-md mx-4">
-      <div class="bg-surface-0 rounded-2xl shadow-2xl overflow-hidden">
+      <div class="bg-surface-0 rounded-2xl shadow-2xl shadow-slate-900 overflow-hidden">
         <!-- Header -->
-        <div class="bg-surface-800 px-8 py-8 text-center">
+        <div class="bg-primary px-8 py-8 text-center">
           <div class="flex justify-center mb-3">
-            <div class="w-16 h-16 bg-primary-500/20 rounded-full flex items-center justify-center">
-              <i class="pi pi-book text-primary-300 text-3xl"></i>
-            </div>
+            <!-- <div class="w-24 h-24 bg-amber-100/90 rounded-full flex items-center justify-center shadow-lg">
+              <img src="@/assets/logo.svg" alt="Kniho-hlod" class="w-16 h-16" />
+            </div> -->
           </div>
-          <h1 class="text-surface-0 text-3xl font-bold tracking-wide mb-1">
+          <h1 class="text-white text-3xl font-bold tracking-wide mb-1">
             {{ t('login.title') }}
           </h1>
-          <p class="text-surface-400 text-sm">{{ t('login.subtitle') }}</p>
+          <p class="text-white text-sm">{{ t('login.subtitle') }}</p>
         </div>
 
         <!-- Form -->
@@ -111,12 +113,12 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
             <label for="password" class="block text-surface-700 font-medium mb-2 text-sm">
               {{ t('login.password') }}
             </label>
-            <InputText
+            <Password
               id="password"
               v-model="userData.password"
-              type="password"
-              :placeholder="t('login.passwordPlaceholder')"
-              class="w-full"
+              :feedback="false"
+              toggleMask
+              fluid
               @keyup.enter="handleAuthorization"
             />
           </div>
@@ -126,7 +128,7 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
             @click="handleAuthorization"
             icon="pi pi-sign-in"
             fluid
-            :disabled="isProcessing"
+            :disabled="isProcessing || !canLogin"
             :loading="isProcessing"
           />
 

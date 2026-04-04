@@ -9,11 +9,12 @@ import FieldSelect from './fields/FieldSelect.vue';
 import FieldTextarea from './fields/FieldTextarea.vue';
 import FieldCheckbox from './fields/FieldCheckbox.vue';
 import FieldDate from './fields/FieldDate.vue';
+import FieldPassword from './fields/FieldPassword.vue';
 
 const fieldComponentMap: Record<string, Component> = {
   text: FieldText,
   email: FieldText,
-  password: FieldText,
+  password: FieldPassword,
   number: FieldNumber,
   select: FieldSelect,
   textarea: FieldTextarea,
@@ -137,7 +138,7 @@ function onSubmit(event: any) {
           icon="pi pi-save"
           :label="definition.submitLabel ?? 'Uložit'"
           :loading="submitting"
-          :disabled="submitting"
+          :disabled="submitting || definition.fields.filter(f => f.required).some(f => !formState[f.name]?.value) || (definition.canSubmit ? !definition.canSubmit(Object.fromEntries(definition.fields.map(f => [f.name, formState[f.name]?.value]))) : false)"
         />
       </div>
     </div>

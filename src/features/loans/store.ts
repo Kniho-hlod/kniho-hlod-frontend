@@ -55,8 +55,7 @@ export function getEarliestLoanReturn(): ExtendedLoan {
 export function getOverdueLoans(): ExtendedLoan[] {
   const today = new Date();
   return useLoanStore().entities.filter(
-    (loan) =>
-      !loan.isReturned && loan.returnDate != null && new Date(loan.returnDate) < today,
+    (loan) => !loan.isReturned && loan.returnDate != null && new Date(loan.returnDate) < today
   );
 }
 
