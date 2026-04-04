@@ -14,7 +14,7 @@
     "service-update": "npm install @kniho-hlod/kniho-hlod-service@latest"
   },
   "dependencies": {
-    "@kniho-hlod/kniho-hlod-service": "^1.10.0",
+    "@kniho-hlod/kniho-hlod-service": "^1.11.0",
     "@primeuix/themes": "^1.0.0-rc.1",
     "@primevue/forms": "^4.2.1",
     "@primevue/themes": "^4.2.1",
