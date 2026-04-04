@@ -19,6 +19,7 @@ export default {
     saveChanges: 'Save changes',
     detail: 'Detail',
     new: 'New',
+    showing: 'Showing {from}–{to} of {total}',
   },
   status: {
     available: 'Available',
@@ -71,6 +72,7 @@ export default {
     bookLabel: 'Book',
     selectBook: 'Select a book',
     detailTitle: 'Loan detail: {id}',
+    searchPlaceholder: 'Search by borrower or book title…',
   },
   admin: {
     title: 'Administrator',
@@ -141,6 +143,13 @@ export default {
   notifications: {
     title: 'Notifications',
     comingSoon: 'This feature will be available soon.',
+    overdueTitle: 'Overdue loans',
+    upcomingTitle: 'Upcoming returns',
+    noneOverdue: 'No overdue loans.',
+    noneUpcoming: 'No loans due within 7 days.',
+    daysLeft: '{days} days left',
+    daysOverdue: '+{days} days overdue',
+    upcomingSubtitle: 'Loans due within the next 7 days.',
   },
   topbar: {
     toggleDark: 'Toggle dark mode',

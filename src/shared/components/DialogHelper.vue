@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, inject } from 'vue';
+import type { Ref } from 'vue';
+import type { DynamicDialogInstance } from 'primevue/dynamicdialogoptions';
 
-const dialogRef = inject<any>('dialogRef');
+const dialogRef = inject<Ref<DynamicDialogInstance>>('dialogRef')!;
 
 // Vytvoření handleru pro custom události
 const customEventHandlers = computed(() => {

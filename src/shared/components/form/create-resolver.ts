@@ -1,7 +1,7 @@
 import type { FormDefinition } from './types';
 
 export function createResolver<T extends Record<string, any>>(definition: FormDefinition<T>) {
-  return (options: { values: Record<string, any>; names: string[] }) => {
+  return (options: { values: Record<string, any>; names?: string[] }) => {
     const { values } = options;
     const errors: Record<string, { message: string }[]> = {};
 

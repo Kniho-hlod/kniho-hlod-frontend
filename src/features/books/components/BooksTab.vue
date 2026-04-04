@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useBookStore, type ExtendedBook } from '@/features/books/store';
 import { Book } from '@/types/entities';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { bookForm } from '@/features/books/books-form-definition';
 import { useLoanStore } from '@/features/loans/store';
@@ -12,6 +12,7 @@ import BookCard from '@/features/books/components/BookCard.vue';
 import BookDetailDialog from '@/features/books/components/BookDetailDialog.vue';
 import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
 import { BOOK_FILTER, type BookFilter } from '@/features/books/constants';
+import { usePagination } from '@/shared/composables/use-pagination';
 
 const { t } = useI18n();
 const store = useBookStore();
@@ -90,6 +91,10 @@ const filterOptions = computed(() => [
   { label: t('books.filterLent'), value: BOOK_FILTER.LENT },
 ]);
 
+const { paginated: pagedBooks, total, first, onPageChange, reset } = usePagination(() => filteredBooks.value);
+
+watch([searchQuery, activeFilter], reset);
+
 onMounted(() => {
   store.fetchEntities();
 });
@@ -144,15 +149,28 @@ onMounted(() => {
       <p>{{ t('books.empty') }}</p>
     </div>
 
-    <!-- Card grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <BookCard
-        v-for="book in filteredBooks"
-        :key="book.id"
-        :book="book"
-        @edit="openDetail"
-        @delete="deleteBook"
+    <template v-else>
+      <!-- Card grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <BookCard
+          v-for="book in pagedBooks"
+          :key="book.id"
+          :book="book"
+          @edit="openDetail"
+          @delete="deleteBook"
+        />
+      </div>
+
+      <!-- Pagination -->
+      <Paginator
+        v-if="total > 12"
+        :first="first"
+        :rows="12"
+        :totalRecords="total"
+        :rowsPerPageOptions="[12, 24, 48]"
+        @page="onPageChange"
+        class="mt-2"
       />
-    </div>
+    </template>
   </div>
 </template>

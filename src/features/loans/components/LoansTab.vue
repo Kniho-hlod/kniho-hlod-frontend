@@ -4,13 +4,14 @@ import { authorizationStore } from '@/stores/authorization-store';
 import { useBookStore } from '@/features/books/store';
 import { getActiveLoans, useLoanStore, type ExtendedLoan } from '@/features/loans/store';
 import { Loan } from '@/types/entities';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { FormDefinition } from '@/shared/components/form/types';
 import { useFormDialog } from '@/shared/composables/use-form-dialog';
 import { useConfirmDialog } from '@/shared/composables/use-confirm-dialog';
 import LoanCard from '@/features/loans/components/LoanCard.vue';
 import { LOAN_TAB, type LoanTab } from '@/features/loans/constants';
+import { usePagination } from '@/shared/composables/use-pagination';
 
 const { t } = useI18n();
 const store = useLoanStore();
@@ -80,6 +81,49 @@ function markAsReturned(loan: ExtendedLoan): void {
 }
 
 const activeTab = ref<LoanTab>(LOAN_TAB.ACTIVE);
+
+const searchQuery = ref('');
+
+const filteredActiveLoans = computed(() => {
+  const q = searchQuery.value.toLowerCase().trim();
+  if (!q) return activeLoans.value;
+  return activeLoans.value.filter(
+    (l) =>
+      l.borrower?.toLowerCase().includes(q) ||
+      l.bookEntity?.title?.toLowerCase().includes(q)
+  );
+});
+
+const filteredArchivedLoans = computed(() => {
+  const q = searchQuery.value.toLowerCase().trim();
+  if (!q) return archivedLoans.value;
+  return archivedLoans.value.filter(
+    (l) =>
+      l.borrower?.toLowerCase().includes(q) ||
+      l.bookEntity?.title?.toLowerCase().includes(q)
+  );
+});
+
+const {
+  paginated: pagedActiveLoans,
+  total: totalActive,
+  first: firstActive,
+  onPageChange: onActivePageChange,
+  reset: resetActive,
+} = usePagination(() => filteredActiveLoans.value);
+
+const {
+  paginated: pagedArchivedLoans,
+  total: totalArchived,
+  first: firstArchived,
+  onPageChange: onArchivedPageChange,
+  reset: resetArchived,
+} = usePagination(() => filteredArchivedLoans.value);
+
+watch([searchQuery, activeTab], () => {
+  resetActive();
+  resetArchived();
+});
 </script>
 
 <template>
@@ -93,6 +137,16 @@ const activeTab = ref<LoanTab>(LOAN_TAB.ACTIVE);
         size="small"
         class="self-start"
         @click="openDialog()"
+      />
+    </div>
+
+    <!-- Search -->
+    <div class="relative">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"></i>
+      <InputText
+        v-model="searchQuery"
+        :placeholder="t('loans.searchPlaceholder')"
+        class="w-full sm:w-80 pl-9"
       />
     </div>
 
@@ -137,38 +191,60 @@ const activeTab = ref<LoanTab>(LOAN_TAB.ACTIVE);
 
     <!-- Active loans card grid -->
     <template v-if="activeTab === LOAN_TAB.ACTIVE">
-      <div v-if="activeLoans.length === 0" class="text-center py-12 text-surface-400">
+      <div v-if="filteredActiveLoans.length === 0" class="text-center py-12 text-surface-400">
         <i class="pi pi-check-circle text-4xl mb-3 block text-surface-200"></i>
         <p>{{ t('loans.emptyActive') }}</p>
       </div>
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <LoanCard
-          v-for="loan in activeLoans"
-          :key="loan.id"
-          :loan="loan"
-          @detail="openDialog(loan as unknown as Loan)"
-          @delete="deleteLoan(loan)"
-          @mark-returned="markAsReturned(loan)"
+      <template v-else>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <LoanCard
+            v-for="loan in pagedActiveLoans"
+            :key="loan.id"
+            :loan="loan"
+            @detail="openDialog(loan as unknown as Loan)"
+            @delete="deleteLoan(loan)"
+            @mark-returned="markAsReturned(loan)"
+          />
+        </div>
+        <Paginator
+          v-if="totalActive > 12"
+          :first="firstActive"
+          :rows="12"
+          :totalRecords="totalActive"
+          :rowsPerPageOptions="[12, 24, 48]"
+          @page="onActivePageChange"
+          class="mt-2"
         />
-      </div>
+      </template>
     </template>
 
     <!-- Archived loans card grid -->
     <template v-if="activeTab === LOAN_TAB.ARCHIVED">
-      <div v-if="archivedLoans.length === 0" class="text-center py-12 text-surface-400">
+      <div v-if="filteredArchivedLoans.length === 0" class="text-center py-12 text-surface-400">
         <i class="pi pi-inbox text-4xl mb-3 block text-surface-200"></i>
         <p>{{ t('loans.emptyArchived') }}</p>
       </div>
-      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <LoanCard
-          v-for="loan in archivedLoans"
-          :key="loan.id"
-          :loan="loan"
-          @detail="openDialog(loan as unknown as Loan)"
-          @delete="deleteLoan(loan)"
-          @mark-returned="markAsReturned(loan)"
+      <template v-else>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <LoanCard
+            v-for="loan in pagedArchivedLoans"
+            :key="loan.id"
+            :loan="loan"
+            @detail="openDialog(loan as unknown as Loan)"
+            @delete="deleteLoan(loan)"
+            @mark-returned="markAsReturned(loan)"
+          />
+        </div>
+        <Paginator
+          v-if="totalArchived > 12"
+          :first="firstArchived"
+          :rows="12"
+          :totalRecords="totalArchived"
+          :rowsPerPageOptions="[12, 24, 48]"
+          @page="onArchivedPageChange"
+          class="mt-2"
         />
-      </div>
+      </template>
     </template>
   </div>
 </template>

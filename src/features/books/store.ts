@@ -12,7 +12,7 @@ export const useBookStore = defineEntityStore<Book, ExtendBook>(
   {},
   {
     service: {
-      getAll: () => getServices().books.getAll(),
+      getAll: (params) => getServices().books.getAll(params),
       getById: (id) => getServices().books.getById(id),
       create: (data) => getServices().books.create(data),
       update: (id, data) => getServices().books.update(id, data),

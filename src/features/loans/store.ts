@@ -5,6 +5,7 @@ import type { CreateExtendedEntity } from '@/types/store-definition';
 import { useBookStore } from '@/features/books/store';
 import { useUserStore } from '@/features/users/store';
 import { sortBy } from '@/shared/utils/date';
+import { MS_PER_DAY } from '@/features/loans/constants';
 
 type ExtendLoan = {
   userEntity: User | null;
@@ -27,7 +28,7 @@ export const useLoanStore = defineEntityStore<Loan, ExtendLoan>(
   },
   {
     service: {
-      getAll: () => getServices().loans.getAll(),
+      getAll: (params) => getServices().loans.getAll(params),
       getById: (id) => getServices().loans.getById(id),
       create: (data) => getServices().loans.create(data),
       update: (id, data) => getServices().loans.update(id, data),
@@ -56,6 +57,18 @@ export function getOverdueLoans(): ExtendedLoan[] {
   const today = new Date();
   return useLoanStore().entities.filter(
     (loan) => !loan.isReturned && loan.returnDate != null && new Date(loan.returnDate) < today
+  );
+}
+
+export function getUpcomingReturns(withinDays = 7): ExtendedLoan[] {
+  const today = new Date();
+  const limit = new Date(today.getTime() + withinDays * MS_PER_DAY);
+  return useLoanStore().entities.filter(
+    (loan) =>
+      !loan.isReturned &&
+      loan.returnDate != null &&
+      new Date(loan.returnDate) >= today &&
+      new Date(loan.returnDate) <= limit
   );
 }
 

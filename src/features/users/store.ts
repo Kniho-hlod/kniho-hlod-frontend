@@ -12,7 +12,7 @@ export const useUserStore = defineEntityStore<User, ExtendUser>(
   {},
   {
     service: {
-      getAll: () => getServices().users.getAll(),
+      getAll: (params) => getServices().users.getAll(params),
       getById: (id) => getServices().users.getById(id),
       create: (data) => getServices().users.create(data),
       update: (id, data) => getServices().users.update(id, data),

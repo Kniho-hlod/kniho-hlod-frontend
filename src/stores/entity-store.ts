@@ -1,27 +1,30 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import type { Ref } from 'vue';
 import type {
   BaseEntity,
   CreateExtendedEntity,
   EntityExtension,
   EntityStoreConfig,
+  PaginationParams,
 } from '@/types/store-definition';
 
 export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
   storeName: string,
-  extensions: { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> } = {} as any,
+  extensions: { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> } = {} as { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> },
   config: EntityStoreConfig
 ) {
   return defineStore(storeName, () => {
-    const rawEntitiesMap = ref(new Map<string, TEntity>());
+    const rawEntitiesMap = ref(new Map<string, TEntity>()) as Ref<Map<string, TEntity>>;
     const error = ref<string | null>(null);
     const isLoading = ref(false);
+    const total = ref(0);
 
     function extendEntity(entity: TEntity): CreateExtendedEntity<TEntity, TExtend> {
       const extended = { ...entity } as CreateExtendedEntity<TEntity, TExtend>;
-      for (const [key, extendFn] of Object.entries(extensions)) {
+      for (const [key, extendFn] of Object.entries(extensions) as [string, EntityExtension<TEntity, unknown>][]) {
         try {
-          (extended as any)[key] = (extendFn as any)(entity);
+          (extended as Record<string, unknown>)[key] = extendFn(entity);
         } catch (err) {
           console.error(`Error extending entity ${entity.id} with ${key}:`, err);
         }
@@ -35,12 +38,13 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
       );
     });
 
-    async function fetchEntities() {
+    async function fetchEntities(params?: PaginationParams) {
       error.value = null;
       isLoading.value = true;
       try {
-        const data = (await config.service.getAll()) as TEntity[];
-        rawEntitiesMap.value = new Map(data.map((e) => [e.id, e]));
+        const response = await config.service.getAll(params);
+        rawEntitiesMap.value = new Map(response.data.map((e) => [e.id, e]));
+        total.value = response.total;
       } catch (err) {
         error.value = (err as Error).message;
       } finally {
@@ -112,6 +116,7 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
       entities,
       error,
       isLoading,
+      total,
       fetchEntities,
       getEntity,
       getRawEntity,

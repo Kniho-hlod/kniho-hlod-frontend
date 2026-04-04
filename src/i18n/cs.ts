@@ -19,6 +19,7 @@ export default {
     saveChanges: 'Uložit změny',
     detail: 'Detail',
     new: 'Nový',
+    showing: 'Zobrazeno {from}–{to} z {total}',
   },
   status: {
     available: 'Dostupná',
@@ -71,6 +72,7 @@ export default {
     bookLabel: 'Kniha',
     selectBook: 'Vyber knihu',
     detailTitle: 'Detail výpůjčky: {id}',
+    searchPlaceholder: 'Hledej podle výpůjčitele nebo názvu knihy…',
   },
   admin: {
     title: 'Administrátor',
@@ -141,6 +143,13 @@ export default {
   notifications: {
     title: 'Notifikace',
     comingSoon: 'Tato funkce bude brzy dostupná.',
+    overdueTitle: 'Výpůjčky po termínu',
+    upcomingTitle: 'Blíží se termín vrácení',
+    noneOverdue: 'Žádné výpůjčky po termínu.',
+    noneUpcoming: 'Žádné výpůjčky se neblíží termínu vrácení.',
+    daysLeft: '{days} dní zbývá',
+    daysOverdue: '+{days} dní po termínu',
+    upcomingSubtitle: 'Výpůjčky, jejichž termín vrácení je do 7 dní.',
   },
   topbar: {
     toggleDark: 'Přepnout tmavý režim',

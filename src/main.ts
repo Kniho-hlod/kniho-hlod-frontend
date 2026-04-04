@@ -56,11 +56,8 @@ app.use(ConfirmationService);
 
 useDarkMode();
 
-// Configure services once — all stores use getServices() from here on
-// For development, you can set the backend URL to http://localhost:3000 and use the local backend
 configureServices(
-  'https://kniho-hlod-backend.onrender.com',
-  //'http://localhost:3000',
+  import.meta.env.VITE_BACKEND_URL,
   () => localStorage.getItem('auth-token')
 );
 

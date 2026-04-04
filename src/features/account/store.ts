@@ -12,7 +12,7 @@ export const useFileStore = defineEntityStore<ProfileImage, ExtendFile>(
   {},
   {
     service: {
-      getAll: () => getServices().files.getAll(),
+      getAll: (params) => getServices().files.getAll(params),
       getById: (id) => getServices().files.getById(id),
       create: (data) => getServices().files.create(data),
       remove: (id) => getServices().files.delete(id),

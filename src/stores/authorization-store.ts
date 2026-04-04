@@ -24,7 +24,6 @@ export const authorizationStore = defineStore('authorization', () => {
   async function handleLogin(userCredentials: { email: string; password: string }): Promise<void> {
     try {
       const userData = await getServices().auth.login(userCredentials);
-      console.log('📦 Data z response:', userData);
 
       tokenManager.setToken(userData.token);
       tokenManager.setTokenExpiration(userData.token, () => {
@@ -35,8 +34,6 @@ export const authorizationStore = defineStore('authorization', () => {
       actualUsername.value = userData.email;
       actualRole.value = userData.role;
 
-      console.log('✅ Token uložen do localStorage:', tokenManager.getToken());
-
       await Promise.all([
         useUserStore().fetchEntities(),
         useBookStore().fetchEntities(),
@@ -44,16 +41,15 @@ export const authorizationStore = defineStore('authorization', () => {
         useFileStore().fetchEntities(),
       ]);
 
+      isAuthInitialized.value = true;
       router.push('/home');
     } catch (error) {
-      console.error('🔥 Chyba při loginu:', error);
       throw error;
     }
   }
 
   function logOut(): void {
     router.push('/login');
-    console.log('mazu token', tokenManager.getToken());
     tokenManager.removeToken();
     isAuthenticated.value = false;
     actualRole.value = '';

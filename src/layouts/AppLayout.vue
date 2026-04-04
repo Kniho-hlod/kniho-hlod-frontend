@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { authorizationStore } from '@/stores/authorization-store';
-import { getActiveLoans } from '@/features/loans/store';
+import { getActiveLoans, getOverdueLoans } from '@/features/loans/store';
 import { setLocale } from '@/i18n';
 import { useDarkMode } from '@/shared/composables/use-dark-mode';
 import { useAvatarUrl } from '@/shared/composables/use-avatar-url';
@@ -31,7 +31,7 @@ const allNavItems: NavItem[] = [
     badge: () => getActiveLoans().length,
   },
   { label: () => t('nav.books'), icon: 'pi pi-book', route: '/home/books' },
-  { label: () => t('nav.notifications'), icon: 'pi pi-bell', route: '/home/notifications' },
+  { label: () => t('nav.notifications'), icon: 'pi pi-bell', route: '/home/notifications', badge: () => getOverdueLoans().length },
   { label: () => t('nav.account'), icon: 'pi pi-user', route: '/home/account' },
   { label: () => t('nav.admin'), icon: 'pi pi-cog', route: '/home/admin', role: 'admin' },
 ];
