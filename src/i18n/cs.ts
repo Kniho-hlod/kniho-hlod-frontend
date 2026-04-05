@@ -154,4 +154,13 @@ export default {
   topbar: {
     toggleDark: 'Přepnout tmavý režim',
   },
+  systemNotifications: {
+    title: 'Systémová oznámení',
+    subtitle: 'Zobrazují se nepřihlášeným uživatelům na přihlašovací stránce',
+    new: 'Nové oznámení',
+    newTitle: 'Nové systémové oznámení',
+    editTitle: 'Upravit: {title}',
+    empty: 'Žádná oznámení.',
+    deleteConfirm: 'Smazat oznámení?',
+  },
 }

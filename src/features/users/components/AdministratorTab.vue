@@ -9,6 +9,7 @@ import { useI18n } from 'vue-i18n';
 import { useFormDialog } from '@/shared/composables/use-form-dialog';
 import { useConfirmDialog } from '@/shared/composables/use-confirm-dialog';
 import UserCard from '@/features/users/components/UserCard.vue';
+import SystemNotificationsSection from '@/features/system-notifications/components/SystemNotificationsSection.vue';
 
 const { t } = useI18n();
 const store = useUserStore();
@@ -122,6 +123,11 @@ onMounted(() => {
           <i :class="stat.icon" :style="{ color: stat.colorVar }"></i>
         </div>
       </div>
+    </div>
+
+    <!-- System notifications -->
+    <div class="bg-surface-0 rounded-xl p-5 shadow-sm border border-surface-100">
+      <SystemNotificationsSection />
     </div>
 
     <!-- Search -->

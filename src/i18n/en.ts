@@ -154,4 +154,13 @@ export default {
   topbar: {
     toggleDark: 'Toggle dark mode',
   },
+  systemNotifications: {
+    title: 'System Notifications',
+    subtitle: 'Displayed to unauthenticated users on the login page',
+    new: 'New notification',
+    newTitle: 'New system notification',
+    editTitle: 'Edit: {title}',
+    empty: 'No notifications.',
+    deleteConfirm: 'Delete notification?',
+  },
 };

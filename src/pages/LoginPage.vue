@@ -7,8 +7,10 @@ import { CreateUserDto } from '@/types/entities';
 import type { FormDefinition } from '@/shared/components/form/types';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { getServices } from '@kniho-hlod/kniho-hlod-service';
+import type { SystemNotification } from '@/types/entities';
 
 const { t } = useI18n();
 
@@ -38,6 +40,16 @@ async function handleAuthorization(): Promise<void> {
     isProcessing.value = false;
   }
 }
+
+const activeNotifications = ref<SystemNotification[]>([]);
+
+onMounted(async () => {
+  try {
+    activeNotifications.value = await getServices().systemNotifications.getActive() as SystemNotification[];
+  } catch {
+    // login page must not fail due to notifications
+  }
+});
 
 const dialog = usePreferredDialog();
 let registrationDialogRef: ReturnType<typeof dialog.open> | null = null;
@@ -87,6 +99,19 @@ async function handleRegistration(values: Record<string, unknown>): Promise<void
 <template>
   <div class="flex items-center justify-center min-h-dvh bg-hlod bg-cover bg-center bg-no-repeat">
     <div class="w-full max-w-md mx-4">
+      <!-- Active system notifications -->
+      <div v-if="activeNotifications.length > 0" class="mb-4 grid gap-2">
+        <Message
+          v-for="n in activeNotifications"
+          :key="n.id"
+          :severity="n.severity === 'warn' ? 'warn' : 'info'"
+          :closable="false"
+        >
+          <span class="font-semibold">{{ n.title }}</span>
+          <span v-if="n.message" class="ml-1">— {{ n.message }}</span>
+        </Message>
+      </div>
+
       <div class="bg-surface-0 rounded-2xl shadow-2xl shadow-stone-900 overflow-hidden">
         <!-- Header -->
         <div class="bg-primary px-8 py-8 text-center">
