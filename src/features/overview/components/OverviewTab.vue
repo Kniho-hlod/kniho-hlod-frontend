@@ -22,12 +22,14 @@ const overviewStats = computed(() => [
     color: 'var(--p-primary-500)',
     value: getAllBooks().length,
     icon: 'pi pi-book',
+    to: '/home/books',
   },
   {
     label: t('overview.statActiveLoans'),
     color: 'var(--p-primary-400)',
     value: getActiveLoans().length,
     icon: 'pi pi-address-book',
+    to: '/home/loans',
   },
   {
     label: t('overview.statOverdue'),
@@ -56,6 +58,7 @@ const overviewStats = computed(() => [
         :value="stat.value"
         :color="stat.color"
         :icon="stat.icon"
+        :to="stat.to"
       />
     </div>
 
