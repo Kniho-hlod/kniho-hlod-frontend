@@ -1,7 +1,7 @@
 import type { FormDefinition } from './types';
 
-export function createResolver<T extends Record<string, any>>(definition: FormDefinition<T>) {
-  return (options: { values: Record<string, any>; names?: string[] }) => {
+export function createResolver<T extends Record<string, unknown>>(definition: FormDefinition<T>) {
+  return (options: { values: Record<string, unknown>; names?: string[] }) => {
     const { values } = options;
     const errors: Record<string, { message: string }[]> = {};
 
@@ -24,7 +24,7 @@ export function createResolver<T extends Record<string, any>>(definition: FormDe
 
       if (fieldErrors.length === 0 && field.validators) {
         for (const validator of field.validators) {
-          const msg = validator(value, values as T);
+          const msg = validator(value, values as unknown as T);
           if (msg) {
             fieldErrors.push({ message: msg });
             break;

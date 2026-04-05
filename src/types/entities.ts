@@ -25,8 +25,3 @@ export type { UserRole };
 export type Entity = import('@kniho-hlod/kniho-hlod-service').UserDto
   | import('@kniho-hlod/kniho-hlod-service').BookDto
   | import('@kniho-hlod/kniho-hlod-service').LoanDto;
-
-export interface EntityWithIndex {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}

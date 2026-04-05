@@ -69,7 +69,7 @@ const badge = computed<CardBadge>(() => {
     :subtitle="loan.bookEntity?.author"
     icon="pi pi-book"
     :badge="badge"
-    :class="isOverdue ? 'border-red-200 bg-red-50/30' : ''"
+    :class="isOverdue ? 'border-red-200 bg-red-50/30 dark:border-red-800/40 dark:bg-red-950/20' : ''"
     :actions="actions"
   >
     <!-- Borrower -->
@@ -84,9 +84,12 @@ const badge = computed<CardBadge>(() => {
         <p class="text-surface-400 mb-0.5">{{ t('loans.loanDate') }}</p>
         <p class="font-medium text-surface-700">{{ formatDate(String(loan.loanDate)) }}</p>
       </div>
-      <div class="rounded-lg px-3 py-2" :class="isOverdue ? 'bg-red-50' : 'bg-surface-50'">
+      <div
+        class="rounded-lg px-3 py-2"
+        :class="isOverdue ? 'bg-red-50 dark:bg-red-950/30' : 'bg-surface-50'"
+      >
         <p class="text-surface-400 mb-0.5">{{ t('loans.returnDate') }}</p>
-        <p class="font-medium" :class="isOverdue ? 'text-red-600' : 'text-surface-700'">
+        <p class="font-medium" :class="isOverdue ? 'text-red-600 dark:text-red-400' : 'text-surface-700'">
           {{ loan.returnDate ? formatDate(String(loan.returnDate)) : t('loans.noDate') }}
         </p>
       </div>

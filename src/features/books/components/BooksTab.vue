@@ -130,13 +130,13 @@ onMounted(() => {
         <button
           v-for="opt in filterOptions"
           :key="opt.value"
-          @click="activeFilter = opt.value"
           class="px-4 py-2 rounded-lg text-sm font-medium transition-all border"
           :class="
             activeFilter === opt.value
               ? 'bg-primary-500 text-white border-primary-500'
               : 'bg-surface-0 text-surface-600 border-surface-200 hover:bg-surface-50'
           "
+          @click="activeFilter = opt.value"
         >
           {{ opt.label }}
         </button>
@@ -166,10 +166,10 @@ onMounted(() => {
         v-if="total > 12"
         :first="first"
         :rows="12"
-        :totalRecords="total"
-        :rowsPerPageOptions="[12, 24, 48]"
-        @page="onPageChange"
+        :total-records="total"
+        :rows-per-page-options="[12, 24, 48]"
         class="mt-2"
+        @page="onPageChange"
       />
     </template>
   </div>

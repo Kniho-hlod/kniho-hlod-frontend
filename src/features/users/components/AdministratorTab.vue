@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { userForm } from '@/features/users/form-definitions/user';
-import { useUserStore } from '@/features/users/store';
+import { useUserStore, type ExtendedUser } from '@/features/users/store';
 import { useBookStore } from '@/features/books/store';
 import { useLoanStore } from '@/features/loans/store';
-import { CreateUserDto, User } from '@/types/entities';
+import { CreateUserDto, type User } from '@/types/entities';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useFormDialog } from '@/shared/composables/use-form-dialog';
@@ -60,12 +60,12 @@ const filteredUsers = computed(() => {
 
 const { openFormDialog } = useFormDialog();
 
-function openDialog(data?: User): void {
+function openDialog(data?: ExtendedUser): void {
   openFormDialog({
     definition: userForm,
     modelValue: (data as unknown as CreateUserDto) ?? new CreateUserDto(),
     onSave: async (content) => {
-      await store.saveEntity(content as unknown as User);
+      await store.saveEntity(content);
     },
     mode: data ? 'view' : 'create',
     header: data ? t('admin.userDetail', { username: data.username }) : t('admin.newUser'),
@@ -146,7 +146,7 @@ onMounted(() => {
       <UserCard
         v-for="user in filteredUsers"
         :key="user.id"
-        :user="(user as User)"
+        :user="user"
         @edit="openDialog"
         @delete="deleteUser"
       />

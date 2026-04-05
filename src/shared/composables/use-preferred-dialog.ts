@@ -9,10 +9,10 @@ import { DIALOG_SIZE_PRESETS } from '@/shared/utils/constants/preferred-dialog-c
 import type { DialogSizePreset } from '@/shared/utils/constants/preferred-dialog-config';
 import { DEFAULT_DIALOG_CONFIG } from '@/shared/utils/constants/preferred-dialog-config';
 
-type CustomEventHandlers = Record<string, (...args: any[]) => void>;
+type CustomEventHandlers = Record<string, (...args: unknown[]) => void>;
 
 export interface ExtendedDialogInstance extends DynamicDialogInstance {
-  updateProps: (newProps: Partial<ComponentProps<any>>) => void;
+  updateProps: (newProps: Record<string, unknown>) => void;
 }
 
 export function usePreferredDialog() {
@@ -48,7 +48,7 @@ export function usePreferredDialog() {
         },
       }) as ExtendedDialogInstance;
 
-      dialogRef.updateProps = (newProps: Partial<ComponentProps<C>>) => {
+      dialogRef.updateProps = (newProps: Record<string, unknown>) => {
         Object.assign(reactiveProps, newProps);
       };
 

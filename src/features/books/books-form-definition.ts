@@ -12,8 +12,8 @@ export const bookForm: FormDefinition<Book> = {
       placeholder: 'Zadejte název knihy',
       colClass: 'col-span-1',
       validators: [
-        (value) => (value && value.length < 3 ? 'Název musí mít alespoň 3 znaky' : null),
-        (value) => (value && value.length > 100 ? 'Název nesmí být delší než 100 znaků' : null),
+        (value) => (typeof value === 'string' && value.length < 3 ? 'Název musí mít alespoň 3 znaky' : null),
+        (value) => (typeof value === 'string' && value.length > 100 ? 'Název nesmí být delší než 100 znaků' : null),
       ],
     },
     {
@@ -24,7 +24,7 @@ export const bookForm: FormDefinition<Book> = {
       placeholder: 'Zadejte jméno autora',
       colClass: 'col-span-1',
       validators: [
-        (value) => (value && value.length < 2 ? 'Jméno autora musí mít alespoň 2 znaky' : null),
+        (value) => (typeof value === 'string' && value.length < 2 ? 'Jméno autora musí mít alespoň 2 znaky' : null),
       ],
     },
     {
@@ -42,10 +42,12 @@ export const bookForm: FormDefinition<Book> = {
       placeholder: 'Zadejte rok vydání',
       colClass: 'col-span-1',
       validators: [
-        (value) =>
-          value && (value < 1000 || value > new Date().getFullYear())
+        (value) => {
+          const year = value as number;
+          return year && (year < 1000 || year > new Date().getFullYear())
             ? `Rok musí být mezi 1000 a ${new Date().getFullYear()}`
-            : null,
+            : null;
+        },
       ],
     },
     {

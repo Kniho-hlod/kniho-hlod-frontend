@@ -27,7 +27,7 @@ onMounted(() => {
 });
 
 const emit = defineEmits<{
-  'all-loaded': void;
+  'all-loaded': [];
 }>();
 </script>
 

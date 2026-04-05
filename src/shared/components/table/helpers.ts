@@ -1,22 +1,23 @@
-import type { ColumnDataType, TableColumnDefinition } from './types';
+import type { TableColumnDefinition } from './types';
 
-export function getNestedValue(obj: any, path: string | string[]): any {
-  // If path is a string, use it directly
+export function getNestedValue(obj: Record<string, unknown>, path: string | string[]): unknown {
   if (typeof path === 'string') {
     return obj[path];
   }
 
-  // If path is an array, traverse the object
   if (Array.isArray(path)) {
-    return path.reduce((current, key) => {
-      return current && current[key] !== undefined ? current[key] : null;
+    return path.reduce<unknown>((current, key) => {
+      if (current !== null && typeof current === 'object' && key in current) {
+        return (current as Record<string, unknown>)[key];
+      }
+      return null;
     }, obj);
   }
 
   return null;
 }
 
-export function formatValue(value: ColumnDataType, column: TableColumnDefinition): any {
+export function formatValue(value: unknown, column: TableColumnDefinition): unknown {
   if (!value) return value;
 
   switch (column.type) {
@@ -29,11 +30,10 @@ export function formatValue(value: ColumnDataType, column: TableColumnDefinition
   }
 }
 
-function formatDateValue(value: ColumnDataType): string {
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return value;
+function formatDateValue(value: unknown): string {
+  const date = new Date(value as string | number | Date);
+  if (isNaN(date.getTime())) return String(value);
 
-  // Format to DD.MM.YYYY
   const day = date.getDate().toString().padStart(2, '0');
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
   const year = date.getFullYear();

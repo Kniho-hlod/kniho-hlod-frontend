@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
 import { getServices } from '@kniho-hlod/kniho-hlod-service';
+import type { CreateUserDto } from '@/types/entities';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
 import { useFileStore } from '@/features/account/store';
@@ -52,7 +53,8 @@ async function saveProfile() {
   isSaving.value = true;
   try {
     await userStore.saveEntity({
-      ...loggedUser,
+      ...(loggedUser as unknown as CreateUserDto),
+      id: loggedUser.id,
       username: editUsername.value,
       email: editEmail.value,
     });
@@ -74,11 +76,11 @@ async function saveProfile() {
       <p class="text-surface-700 font-medium text-sm mb-2">{{ t('account.avatar') }}</p>
       <div class="flex items-center gap-2 flex-wrap">
         <input
+          id="avatarInput"
           type="file"
           accept="image/*"
-          @change="onFileSelect"
           class="hidden"
-          id="avatarInput"
+          @change="onFileSelect"
         />
         <label
           for="avatarInput"

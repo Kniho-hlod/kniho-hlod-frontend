@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { FormFieldScope } from '../types';
 import type { PasswordFieldDef } from '../types';
 
 defineProps<{
-  field: PasswordFieldDef<any>;
-  fieldState: any;
+  field: PasswordFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
 </script>
@@ -12,13 +13,13 @@ defineProps<{
   <IftaLabel>
     <Password
       :id="field.name"
-      v-bind="fieldState"
+      v-bind="(fieldState as unknown as Record<string, unknown>)"
       :placeholder="field.placeholder"
       :disabled="disabled"
       :invalid="fieldState.invalid"
       variant="filled"
       :feedback="field.feedback ?? false"
-      :toggleMask="field.toggleMask ?? true"
+      :toggle-mask="field.toggleMask ?? true"
       fluid
     />
     <label :for="field.name">{{ field.label }}</label>

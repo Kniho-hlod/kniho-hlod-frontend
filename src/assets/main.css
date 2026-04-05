@@ -2,3 +2,18 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 @import 'primeicons/primeicons.css';
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-surface-50 text-surface-800 antialiased;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+h1,
+h2,
+h3 {
+  @apply tracking-tight;
+}

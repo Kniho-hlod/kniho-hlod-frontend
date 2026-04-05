@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { FormFieldScope } from '../types';
 import type { SelectFieldDef } from '../types';
 
 defineProps<{
-  field: SelectFieldDef<any>;
-  fieldState: any;
+  field: SelectFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
 </script>
@@ -11,8 +12,8 @@ defineProps<{
 <template>
   <IftaLabel>
     <Select
-      :inputId="field.name"
-      v-bind="fieldState"
+      :input-id="field.name"
+      v-bind="(fieldState as unknown as Record<string, unknown>)"
       :options="field.options"
       option-label="label"
       option-value="value"

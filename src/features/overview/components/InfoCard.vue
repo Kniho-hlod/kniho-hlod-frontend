@@ -12,7 +12,7 @@ defineProps<{
 <template>
   <Card>
     <template #content>
-      <div class="flex items-center gap-2 text-primary-600 font-semibold mb-3 text-sm">
+      <div class="flex items-center gap-2 text-primary-600 dark:text-primary-400 font-semibold mb-3 text-sm">
         <i :class="icon" />
         {{ titleKey }}
       </div>

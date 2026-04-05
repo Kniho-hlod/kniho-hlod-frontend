@@ -9,10 +9,17 @@ import type {
   PaginationParams,
 } from '@/types/store-definition';
 
-export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
+export function defineEntityStore<
+  TEntity extends BaseEntity,
+  TExtend = {},
+  TCreate = TEntity,
+  TUpdate = Partial<TCreate>,
+>(
   storeName: string,
-  extensions: { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> } = {} as { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> },
-  config: EntityStoreConfig
+  extensions: { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> } = {} as {
+    [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]>;
+  },
+  config: EntityStoreConfig<TEntity, TCreate, TUpdate>,
 ) {
   return defineStore(storeName, () => {
     const rawEntitiesMap = ref(new Map<string, TEntity>()) as Ref<Map<string, TEntity>>;
@@ -22,7 +29,10 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
 
     function extendEntity(entity: TEntity): CreateExtendedEntity<TEntity, TExtend> {
       const extended = { ...entity } as CreateExtendedEntity<TEntity, TExtend>;
-      for (const [key, extendFn] of Object.entries(extensions) as [string, EntityExtension<TEntity, unknown>][]) {
+      for (const [key, extendFn] of Object.entries(extensions) as [
+        string,
+        EntityExtension<TEntity, unknown>,
+      ][]) {
         try {
           (extended as Record<string, unknown>)[key] = extendFn(entity);
         } catch (err) {
@@ -33,12 +43,10 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
     }
 
     const entities = computed<Array<CreateExtendedEntity<TEntity, TExtend>>>(() => {
-      return Array.from(rawEntitiesMap.value.values()).map((entity) =>
-        extendEntity(entity as TEntity)
-      );
+      return Array.from(rawEntitiesMap.value.values()).map((entity) => extendEntity(entity));
     });
 
-    async function fetchEntities(params?: PaginationParams) {
+    async function fetchEntities(params?: PaginationParams): Promise<void> {
       error.value = null;
       isLoading.value = true;
       try {
@@ -46,22 +54,24 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
         rawEntitiesMap.value = new Map(response.data.map((e) => [e.id, e]));
         total.value = response.total;
       } catch (err) {
-        error.value = (err as Error).message;
+        error.value = err instanceof Error ? err.message : String(err);
       } finally {
         isLoading.value = false;
       }
     }
 
-    async function getEntity(id: string): Promise<CreateExtendedEntity<TEntity, TExtend> | null> {
+    async function getEntity(
+      id: string,
+    ): Promise<CreateExtendedEntity<TEntity, TExtend> | null> {
       if (!config.service.getById) return null;
       error.value = null;
       isLoading.value = true;
       try {
-        const entity = (await config.service.getById(id)) as TEntity;
+        const entity = await config.service.getById(id);
         rawEntitiesMap.value.set(entity.id, entity);
         return extendEntity(entity);
       } catch (err) {
-        error.value = (err as Error).message;
+        error.value = err instanceof Error ? err.message : String(err);
         return null;
       } finally {
         isLoading.value = false;
@@ -69,11 +79,11 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
     }
 
     function getRawEntity(id: string): TEntity | null {
-      return (rawEntitiesMap.value.get(id) as TEntity) ?? null;
+      return rawEntitiesMap.value.get(id) ?? null;
     }
 
     async function saveEntity(
-      entityData: TEntity
+      entityData: TCreate & { id?: string },
     ): Promise<CreateExtendedEntity<TEntity, TExtend> | undefined> {
       error.value = null;
       isLoading.value = true;
@@ -81,22 +91,22 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
         let saved: TEntity;
         if (entityData.id) {
           if (!config.service.update) throw new Error('update not supported by this service');
-          saved = (await config.service.update(entityData.id, entityData)) as TEntity;
+          saved = await config.service.update(entityData.id, entityData as unknown as TUpdate);
         } else {
           if (!config.service.create) throw new Error('create not supported by this service');
-          saved = (await config.service.create(entityData)) as TEntity;
+          saved = await config.service.create(entityData);
         }
         rawEntitiesMap.value.set(saved.id, saved);
         return extendEntity(saved);
       } catch (err) {
-        error.value = (err as Error).message;
+        error.value = err instanceof Error ? err.message : String(err);
         return undefined;
       } finally {
         isLoading.value = false;
       }
     }
 
-    async function deleteEntity(id: string) {
+    async function deleteEntity(id: string): Promise<boolean> {
       if (!config.service.remove) return false;
       error.value = null;
       isLoading.value = true;
@@ -105,7 +115,7 @@ export function defineEntityStore<TEntity extends BaseEntity, TExtend = {}>(
         rawEntitiesMap.value.delete(id);
         return true;
       } catch (err) {
-        error.value = (err as Error).message;
+        error.value = err instanceof Error ? err.message : String(err);
         return false;
       } finally {
         isLoading.value = false;

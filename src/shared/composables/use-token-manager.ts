@@ -16,20 +16,29 @@ export function useTokenManager(tokenKey: string = 'auth-token') {
       const decoded: DecodedToken = jwtDecode(token);
       const expiresInMs = decoded.exp * 1000 - Date.now();
 
-      console.log('Token expires in:', Math.round(expiresInMs / 1000), 'seconds');
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.log('Token expires in:', Math.round(expiresInMs / 1000), 'seconds');
+      }
 
       if (logoutTimeout) {
         clearTimeout(logoutTimeout);
       }
 
       if (expiresInMs <= 5000) {
-        console.log('Token already expired or expires very soon, logging out immediately...');
+        if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
+          console.log('Token already expired or expires very soon, logging out immediately...');
+        }
         onExpire();
         return;
       }
 
       logoutTimeout = setTimeout(() => {
-        console.log('Token expired, logging out...');
+        if (import.meta.env.DEV) {
+          // eslint-disable-next-line no-console
+          console.log('Token expired, logging out...');
+        }
         onExpire();
       }, expiresInMs);
     } catch (error) {

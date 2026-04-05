@@ -59,11 +59,11 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
 <template>
   <div class="min-h-screen flex">
     <!-- Desktop fixed sidebar -->
-    <aside class="hidden lg:flex flex-col w-64 shrink-0 fixed inset-y-0 left-0 bg-surface-800 z-10">
+    <aside class="hidden lg:flex flex-col w-64 shrink-0 fixed inset-y-0 left-0 bg-stone-800 z-10">
       <!-- Logo -->
-      <div class="flex items-center gap-3 px-5 py-5 border-b border-surface-700">
-        <i class="pi pi-book text-primary-400 text-2xl"></i>
-        <span class="text-surface-0 font-bold text-xl tracking-wide">Kniho-hlod</span>
+      <div class="flex items-center gap-3 px-5 py-5 border-b border-stone-700">
+        <i class="pi pi-book text-amber-400 text-2xl"></i>
+        <span class="text-stone-50 font-bold text-xl tracking-wide">Kniho-hlod</span>
       </div>
 
       <!-- Nav items -->
@@ -71,13 +71,13 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
         <button
           v-for="item in navItems"
           :key="item.route"
-          @click="navigate(item.route)"
           class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg mb-0.5 text-left transition-colors relative"
           :class="
             isActive(item.route)
-              ? 'bg-primary-500/20 text-primary-300 font-semibold'
-              : 'text-surface-400 hover:bg-surface-700 hover:text-surface-0'
+              ? 'bg-amber-500/20 text-amber-300 font-semibold'
+              : 'text-stone-400 hover:bg-stone-700 hover:text-stone-50'
           "
+          @click="navigate(item.route)"
         >
           <i :class="item.icon" class="text-base w-5 text-center shrink-0"></i>
           <span class="text-sm">{{ item.label() }}</span>
@@ -91,7 +91,7 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
       </nav>
 
       <!-- User section -->
-      <div class="border-t border-surface-700 p-3">
+      <div class="border-t border-stone-700 p-3">
         <div class="flex items-center gap-2 px-2 py-2 mb-1">
           <Avatar
             :image="avatarUrl || undefined"
@@ -100,7 +100,7 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
             size="small"
             class="shrink-0"
           />
-          <span class="text-surface-200 text-sm font-medium truncate">
+          <span class="text-stone-200 text-sm font-medium truncate">
             {{ loggedUser?.username }}
           </span>
         </div>
@@ -123,15 +123,15 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
             :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
             text
             size="small"
-            @click="toggle"
             class="ml-auto"
             :aria-label="t('topbar.toggleDark')"
+            @click="toggle"
           />
         </div>
 
         <button
+          class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-stone-400 hover:bg-stone-700 hover:text-stone-50 transition-colors text-sm"
           @click="logOut"
-          class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-surface-400 hover:bg-surface-700 hover:text-surface-0 transition-colors text-sm"
         >
           <i class="pi pi-sign-out w-5 text-center"></i>
           <span>{{ t('nav.logout') }}</span>
@@ -143,20 +143,20 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
     <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
       <!-- Mobile top bar -->
       <header
-        class="lg:hidden sticky top-0 z-20 bg-surface-800 flex items-center justify-between px-4 h-14 border-b border-surface-700"
+        class="lg:hidden sticky top-0 z-20 bg-stone-800 flex items-center justify-between px-4 h-14 border-b border-stone-700"
       >
         <div class="flex items-center gap-3">
           <Button
             icon="pi pi-bars"
             text
             severity="secondary"
-            @click="drawerVisible = true"
-            class="!text-surface-200"
+            class="!text-stone-200"
             aria-label="Open menu"
+            @click="drawerVisible = true"
           />
           <div class="flex items-center gap-2">
-            <i class="pi pi-book text-primary-400"></i>
-            <span class="text-surface-0 font-bold">Kniho-hlod</span>
+            <i class="pi pi-book text-amber-400"></i>
+            <span class="text-stone-50 font-bold">Kniho-hlod</span>
           </div>
         </div>
         <div class="flex items-center gap-1">
@@ -166,8 +166,8 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
             :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
             text
             size="small"
-            @click="toggle"
             :aria-label="t('topbar.toggleDark')"
+            @click="toggle"
           />
           <Avatar :image="avatarUrl || undefined" :icon="avatarUrl ? undefined : 'pi pi-user'" shape="circle" size="small" />
         </div>
@@ -202,13 +202,13 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
         <button
           v-for="item in navItems"
           :key="item.route"
-          @click="navigate(item.route)"
           class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors"
           :class="
             isActive(item.route)
-              ? 'bg-primary-50 text-primary-700 font-semibold'
+              ? 'bg-primary-50 text-primary-700 font-semibold dark:bg-amber-900/30 dark:text-amber-300'
               : 'text-surface-600 hover:bg-surface-100'
           "
+          @click="navigate(item.route)"
         >
           <i :class="item.icon" class="text-base w-5 text-center shrink-0"></i>
           <span class="text-sm">{{ item.label() }}</span>

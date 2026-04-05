@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { FormFieldScope } from '../types';
 import type { TextareaFieldDef } from '../types';
 
 defineProps<{
-  field: TextareaFieldDef<any>;
-  fieldState: any;
+  field: TextareaFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
 </script>
@@ -12,7 +13,7 @@ defineProps<{
   <IftaLabel>
     <Textarea
       :id="field.name"
-      v-bind="fieldState"
+      v-bind="(fieldState as unknown as Record<string, unknown>)"
       :rows="field.rows ?? 3"
       :placeholder="field.placeholder"
       :disabled="disabled"

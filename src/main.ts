@@ -16,20 +16,60 @@ import { i18n } from '@/i18n';
 import { authorizationStore } from './stores/authorization-store';
 import ConfirmationService from 'primevue/confirmationservice';
 
-const TealAura = definePreset(Aura, {
+const WarmAura = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '{teal.50}',
-      100: '{teal.100}',
-      200: '{teal.200}',
-      300: '{teal.300}',
-      400: '{teal.400}',
-      500: '{teal.500}',
-      600: '{teal.600}',
-      700: '{teal.700}',
-      800: '{teal.800}',
-      900: '{teal.900}',
-      950: '{teal.950}',
+      50: '{amber.50}',
+      100: '{amber.100}',
+      200: '{amber.200}',
+      300: '{amber.300}',
+      400: '{amber.400}',
+      500: '{amber.500}',
+      600: '{amber.600}',
+      700: '{amber.700}',
+      800: '{amber.800}',
+      900: '{amber.900}',
+      950: '{amber.950}',
+    },
+    colorScheme: {
+      light: {
+        surface: {
+          0: '#ffffff',
+          50: '{stone.50}',
+          100: '{stone.100}',
+          200: '{stone.200}',
+          300: '{stone.300}',
+          400: '{stone.400}',
+          500: '{stone.500}',
+          600: '{stone.600}',
+          700: '{stone.700}',
+          800: '{stone.800}',
+          900: '{stone.900}',
+          950: '{stone.950}',
+        },
+      },
+      dark: {
+        surface: {
+          0: '{stone.950}',
+          50: '{stone.900}',
+          100: '{stone.800}',
+          200: '{stone.700}',
+          300: '{stone.600}',
+          400: '{stone.500}',
+          500: '{stone.400}',
+          600: '{stone.300}',
+          700: '{stone.200}',
+          800: '{stone.100}',
+          900: '{stone.50}',
+          950: '#ffffff',
+        },
+        primary: {
+          color: '{amber.400}',
+          contrastColor: '{stone.950}',
+          hoverColor: '{amber.300}',
+          activeColor: '{amber.200}',
+        },
+      },
     },
   },
 });
@@ -41,7 +81,7 @@ app.use(pinia);
 
 app.use(Primevue, {
   theme: {
-    preset: TealAura,
+    preset: WarmAura,
     options: {
       darkModeSelector: '.p-dark',
     },

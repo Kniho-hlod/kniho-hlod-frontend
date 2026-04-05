@@ -15,10 +15,12 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
       placeholder: 'Zadejte svůj email.',
       validators: [
         (value) =>
-          value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Zadejte platný email' : null,
+          typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+            ? 'Zadejte platný email'
+            : null,
       ],
     },
-        {
+    {
       name: 'username',
       label: 'Uživatelské jméno',
       type: 'text',
@@ -31,7 +33,7 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
       type: 'password',
       required: true,
       validators: [
-        (value) => (value && value.length < 8 ? 'Heslo musí mít alespoň 8 znaků' : null),
+        (value) => (typeof value === 'string' && value.length < 8 ? 'Heslo musí mít alespoň 8 znaků' : null),
       ],
     },
     {

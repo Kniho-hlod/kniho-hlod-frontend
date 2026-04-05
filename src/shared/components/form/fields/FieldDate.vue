@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { DatePicker } from 'primevue';
+import { computed } from 'vue';
+import type { FormFieldScope } from '../types';
 import type { DateFieldDef } from '../types';
 
-defineProps<{
-  field: DateFieldDef<any>;
-  fieldState: any;
+const props = defineProps<{
+  field: DateFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
+
+const dateValue = computed(() => (props.fieldState.value instanceof Date ? props.fieldState.value : null));
 </script>
 
 <template>
   <IftaLabel>
     <DatePicker
       :id="field.name"
-      :modelValue="fieldState.value"
-      @date-select="(val) => fieldState.props.onChange({ target: { value: val } })"
-      @blur="fieldState.props.onBlur"
-      :dateFormat="field.dateFormat ?? 'dd.mm.yy'"
+      :model-value="dateValue"
+      :date-format="field.dateFormat ?? 'dd.mm.yy'"
       :placeholder="field.placeholder"
       :disabled="disabled"
       :invalid="fieldState.invalid"
@@ -24,6 +26,8 @@ defineProps<{
       show-icon
       icon-display="input"
       fluid
+      @date-select="(val) => fieldState.props.onChange?.({ target: { value: val } })"
+      @blur="() => fieldState.props.onBlur?.()"
     />
     <label :for="field.name">{{ field.label }}</label>
   </IftaLabel>

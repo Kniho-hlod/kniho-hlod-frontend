@@ -3,7 +3,8 @@ import { registrationForm } from '@/features/users/form-definitions/registration
 import GenericForm from '@/shared/components/form/GenericForm.vue';
 import { useNotification } from '@/shared/composables/use-notification';
 import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
-import { CreateUserDto, User } from '@/types/entities';
+import { CreateUserDto } from '@/types/entities';
+import type { FormDefinition } from '@/shared/components/form/types';
 import { authorizationStore } from '@/stores/authorization-store';
 import { useUserStore } from '@/features/users/store';
 import { computed, reactive, ref } from 'vue';
@@ -45,11 +46,11 @@ function openRegistrationDialog(data: CreateUserDto): void {
   registrationDialogRef = dialog.open(
     GenericForm,
     {
-      definition: registrationForm,
-      modelValue: data,
+      definition: registrationForm as unknown as FormDefinition<Record<string, unknown>>,
+      modelValue: data as unknown as Record<string, unknown>,
       mode: 'create',
       submitting: isSubmitting.value,
-      onSubmit: handleRegistration,
+      onSubmit: handleRegistration as unknown as (value: Record<string, unknown>) => void,
     },
     {
       modal: true,
@@ -59,19 +60,19 @@ function openRegistrationDialog(data: CreateUserDto): void {
   );
 }
 
-async function handleRegistration(values: CreateUserDto): Promise<void> {
+async function handleRegistration(values: Record<string, unknown>): Promise<void> {
   isSubmitting.value = true;
   registrationDialogRef?.updateProps({ submitting: true });
-  const payload = { ...values, role: 'user' as const };
+  const payload = { ...(values as CreateUserDto), role: 'user' as const };
 
   try {
-    await store.saveEntity(payload as unknown as User);
+    await store.saveEntity(payload);
     showSaveSuccess(
       t('login.registrationSuccess'),
       t('login.registrationSuccessDetail', { username: payload.username })
     );
     registrationDialogRef?.close();
-  } catch (error) {
+  } catch {
     showSaveError(
       t('login.registrationError'),
       t('login.registrationErrorDetail', { username: payload.username })
@@ -86,7 +87,7 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
 <template>
   <div class="flex items-center justify-center min-h-dvh bg-hlod bg-cover bg-center bg-no-repeat">
     <div class="w-full max-w-md mx-4">
-      <div class="bg-surface-0 rounded-2xl shadow-2xl shadow-slate-900 overflow-hidden">
+      <div class="bg-surface-0 rounded-2xl shadow-2xl shadow-stone-900 overflow-hidden">
         <!-- Header -->
         <div class="bg-primary px-8 py-8 text-center">
           <div class="flex justify-center mb-3">
@@ -117,7 +118,7 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
               id="password"
               v-model="userData.password"
               :feedback="false"
-              toggleMask
+              toggle-mask
               fluid
               @keyup.enter="handleAuthorization"
             />
@@ -125,11 +126,11 @@ async function handleRegistration(values: CreateUserDto): Promise<void> {
 
           <Button
             :label="t('login.submit')"
-            @click="handleAuthorization"
             icon="pi pi-sign-in"
             fluid
             :disabled="isProcessing || !canLogin"
             :loading="isProcessing"
+            @click="handleAuthorization"
           />
 
           <div class="text-center mt-5 text-sm">

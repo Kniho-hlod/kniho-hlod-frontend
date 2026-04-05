@@ -1,20 +1,22 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import type { FormFieldScope } from '../types';
 import type { NumberFieldDef } from '../types';
 
-defineProps<{
-  field: NumberFieldDef<any>;
-  fieldState: any;
+const props = defineProps<{
+  field: NumberFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
+
+const numberValue = computed(() => (typeof props.fieldState.value === 'number' ? props.fieldState.value : null));
 </script>
 
 <template>
   <IftaLabel>
     <InputNumber
       :id="field.name"
-      :modelValue="fieldState.value"
-      @value-change="(val) => fieldState.props.onChange({ target: { value: val } })"
-      @blur="fieldState.props.onBlur"
+      :model-value="numberValue"
       :min="field.min"
       :max="field.max"
       :placeholder="field.placeholder"
@@ -22,6 +24,8 @@ defineProps<{
       :invalid="fieldState.invalid"
       variant="filled"
       fluid
+      @value-change="(val) => fieldState.props.onChange?.({ target: { value: val } })"
+      @blur="() => fieldState.props.onBlur?.()"
     />
     <label :for="field.name">{{ field.label }}</label>
   </IftaLabel>

@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { FormFieldScope } from '../types';
 import type { CheckboxFieldDef } from '../types';
 
 defineProps<{
-  field: CheckboxFieldDef<any>;
-  fieldState: any;
+  field: CheckboxFieldDef<Record<string, unknown>>;
+  fieldState: FormFieldScope;
   disabled: boolean;
 }>();
 </script>
@@ -12,7 +13,7 @@ defineProps<{
   <div class="flex items-center gap-2">
     <Checkbox
       :id="field.name"
-      v-bind="fieldState"
+      v-bind="(fieldState as unknown as Record<string, unknown>)"
       :disabled="disabled"
       :invalid="fieldState.invalid"
       binary

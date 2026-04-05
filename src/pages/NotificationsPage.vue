@@ -44,7 +44,7 @@ function daysLeft(returnDate: Date | string): number {
         <div
           v-for="loan in overdueLoans"
           :key="loan.id"
-          class="flex items-center justify-between bg-red-50 border border-red-200 rounded-lg px-4 py-3"
+          class="flex items-center justify-between bg-red-50 border border-red-200 rounded-lg px-4 py-3 dark:bg-red-950/30 dark:border-red-800/40"
         >
           <div>
             <p class="font-medium text-surface-800 text-sm">{{ loan.bookEntity?.title }}</p>
@@ -77,7 +77,7 @@ function daysLeft(returnDate: Date | string): number {
         <div
           v-for="loan in upcomingLoans"
           :key="loan.id"
-          class="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-3"
+          class="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 dark:bg-amber-950/20 dark:border-amber-700/40"
         >
           <div>
             <p class="font-medium text-surface-800 text-sm">{{ loan.bookEntity?.title }}</p>

@@ -35,7 +35,7 @@ export function useConfirmDialog() {
           try {
             await input.handleConfirmCallback();
             showSaveSuccess('Úspěšně uloženo');
-          } catch (error) {
+          } catch {
             showSaveError('Chyba při ukládání');
           }
         },
@@ -52,7 +52,7 @@ export function useConfirmDialog() {
           try {
             await input.handleConfirmCallback();
             showSaveSuccess('Úspěšně smazáno');
-          } catch (error) {
+          } catch {
             showSaveError('Chyba při mazání');
           }
         },
@@ -69,7 +69,7 @@ export function useConfirmDialog() {
           try {
             await input.handleConfirmCallback();
             showSaveSuccess('Úspěšně odesláno');
-          } catch (error) {
+          } catch {
             showSaveError('Chyba při odesílání');
           }
         },

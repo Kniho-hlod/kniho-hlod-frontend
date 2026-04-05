@@ -15,18 +15,18 @@ defineProps<{
 
 <template>
   <DataTable :value="items" size="small" :row-class="rowClass">
-    <template #empty>{{ 'neni zaznamu' }}</template>
+    <template #empty>neni zaznamu</template>
     <Column v-if="handleDetail" class="w-0">
       <template v-if="!displayDetailOnly" #header>
-        <Button size="small" @click="handleDetail()" icon="pi pi-plus" />
+        <Button size="small" icon="pi pi-plus" @click="handleDetail()" />
       </template>
       <template #body="{ data }">
-        <Button size="small" outlined @click="handleDetail(data)" icon="pi pi-search" />
+        <Button size="small" outlined icon="pi pi-search" @click="handleDetail(data)" />
       </template>
     </Column>
     <Column v-if="handleDelete" class="w-0">
       <template #body="{ data }">
-        <Button size="small" severity="danger" @click="handleDelete(data)" icon="pi pi-trash" />
+        <Button size="small" severity="danger" icon="pi pi-trash" @click="handleDelete(data)" />
       </template>
     </Column>
     <Column v-if="$slots['action-column']" class="w-0">
@@ -46,7 +46,7 @@ defineProps<{
       :header="col.header"
     >
       <template #body="{ data }">
-        {{ formatValue(getNestedValue(data, col.field), col) }}
+        {{ formatValue(getNestedValue(data as Record<string, unknown>, col.field), col) }}
       </template>
     </Column>
   </DataTable>

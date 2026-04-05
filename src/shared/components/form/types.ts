@@ -1,4 +1,20 @@
-export type FieldValidator<T = any> = (value: any, formData: T) => string | null;
+export type FieldValidator<T = Record<string, unknown>> = (value: unknown, formData: T) => string | null;
+
+export interface FormFieldScope {
+  props: {
+    onChange?: (...args: unknown[]) => void;
+    onBlur?: () => void;
+    [key: string]: unknown;
+  };
+  value: unknown;
+  touched: boolean;
+  dirty: boolean;
+  pristine: boolean;
+  valid: boolean;
+  invalid: boolean;
+  error: { message?: string } | null;
+  errors: Array<{ message?: string }>;
+}
 
 interface BaseFieldDef<T> {
   name: keyof T & string;
@@ -32,7 +48,7 @@ export interface NumberFieldDef<T> extends BaseFieldDef<T> {
 
 export interface SelectFieldDef<T> extends BaseFieldDef<T> {
   type: 'select';
-  options: Array<{ label: string; value: any }>;
+  options: Array<{ label: string; value: unknown }>;
   placeholder?: string;
 }
 

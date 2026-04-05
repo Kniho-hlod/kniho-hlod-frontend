@@ -11,9 +11,8 @@ export const userForm: FormDefinition<CreateUserDto> = {
       required: true,
       colClass: 'col-span-1',
       validators: [
-        (value) => (value && value.length < 3 ? 'Uživatelské jméno mít alespoň 3 znaky' : null),
-        (value) =>
-          value && value.length > 50 ? 'Uživatelské jméno nesmí být delší než 50 znaků' : null,
+        (value) => (typeof value === 'string' && value.length < 3 ? 'Uživatelské jméno mít alespoň 3 znaky' : null),
+        (value) => (typeof value === 'string' && value.length > 50 ? 'Uživatelské jméno nesmí být delší než 50 znaků' : null),
       ],
     },
     {
@@ -30,7 +29,7 @@ export const userForm: FormDefinition<CreateUserDto> = {
       required: true,
       colClass: 'col-span-1',
       validators: [
-        (value) => (value && value.length < 6 ? 'Heslo musí mít alespoň 6 znaků' : null),
+        (value) => (typeof value === 'string' && value.length < 8 ? 'Heslo musí mít alespoň 8 znaků' : null),
       ],
     },
     {

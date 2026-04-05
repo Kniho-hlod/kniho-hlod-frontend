@@ -12,7 +12,7 @@ export const loanForm: FormDefinition<Loan> = {
       placeholder: 'Zadejte jméno výpůjčitele',
       colClass: 'col-span-2',
       validators: [
-        (value) => (value && value.length < 2 ? 'Jméno musí mít alespoň 2 znaky' : null),
+        (value) => (typeof value === 'string' && value.length < 2 ? 'Jméno musí mít alespoň 2 znaky' : null),
       ],
     },
     {

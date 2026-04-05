@@ -52,7 +52,7 @@ const editedLoanForm = computed<FormDefinition<Loan>>(() => ({
 
 const { openFormDialog } = useFormDialog();
 
-function openDialog(data?: Loan): void {
+function openDialog(data?: ExtendedLoan): void {
   openFormDialog({
     definition: editedLoanForm.value,
     modelValue: data ?? new Loan(),
@@ -60,7 +60,7 @@ function openDialog(data?: Loan): void {
       await store.saveEntity({ ...content, ownerId: loggedUser!.id });
     },
     mode: data ? 'view' : 'create',
-    header: data ? t('loans.detailTitle', { id: (data as Loan).id }) : t('loans.new'),
+    header: data ? t('loans.detailTitle', { id: data.id }) : t('loans.new'),
   });
 }
 
@@ -153,13 +153,13 @@ watch([searchQuery, activeTab], () => {
     <!-- Tabs -->
     <div class="flex gap-2">
       <button
-        @click="activeTab = LOAN_TAB.ACTIVE"
         class="px-4 py-2 rounded-lg text-sm font-medium transition-all border"
         :class="
           activeTab === LOAN_TAB.ACTIVE
             ? 'bg-primary-500 text-white border-primary-500'
             : 'bg-surface-0 text-surface-600 border-surface-200 hover:bg-surface-50'
         "
+        @click="activeTab = LOAN_TAB.ACTIVE"
       >
         <i class="pi pi-calendar-plus mr-1.5"></i>
         {{ t('loans.tabActive') }}
@@ -176,13 +176,13 @@ watch([searchQuery, activeTab], () => {
         </span>
       </button>
       <button
-        @click="activeTab = LOAN_TAB.ARCHIVED"
         class="px-4 py-2 rounded-lg text-sm font-medium transition-all border"
         :class="
           activeTab === LOAN_TAB.ARCHIVED
             ? 'bg-primary-500 text-white border-primary-500'
             : 'bg-surface-0 text-surface-600 border-surface-200 hover:bg-surface-50'
         "
+        @click="activeTab = LOAN_TAB.ARCHIVED"
       >
         <i class="pi pi-history mr-1.5"></i>
         {{ t('loans.tabArchived') }}
@@ -201,7 +201,7 @@ watch([searchQuery, activeTab], () => {
             v-for="loan in pagedActiveLoans"
             :key="loan.id"
             :loan="loan"
-            @detail="openDialog(loan as unknown as Loan)"
+            @detail="openDialog(loan)"
             @delete="deleteLoan(loan)"
             @mark-returned="markAsReturned(loan)"
           />
@@ -210,10 +210,10 @@ watch([searchQuery, activeTab], () => {
           v-if="totalActive > 12"
           :first="firstActive"
           :rows="12"
-          :totalRecords="totalActive"
-          :rowsPerPageOptions="[12, 24, 48]"
-          @page="onActivePageChange"
+          :total-records="totalActive"
+          :rows-per-page-options="[12, 24, 48]"
           class="mt-2"
+          @page="onActivePageChange"
         />
       </template>
     </template>
@@ -230,7 +230,7 @@ watch([searchQuery, activeTab], () => {
             v-for="loan in pagedArchivedLoans"
             :key="loan.id"
             :loan="loan"
-            @detail="openDialog(loan as unknown as Loan)"
+            @detail="openDialog(loan)"
             @delete="deleteLoan(loan)"
             @mark-returned="markAsReturned(loan)"
           />
@@ -239,10 +239,10 @@ watch([searchQuery, activeTab], () => {
           v-if="totalArchived > 12"
           :first="firstArchived"
           :rows="12"
-          :totalRecords="totalArchived"
-          :rowsPerPageOptions="[12, 24, 48]"
-          @page="onArchivedPageChange"
+          :total-records="totalArchived"
+          :rows-per-page-options="[12, 24, 48]"
           class="mt-2"
+          @page="onArchivedPageChange"
         />
       </template>
     </template>

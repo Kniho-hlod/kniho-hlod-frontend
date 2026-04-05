@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Form, FormField } from '@primevue/forms';
 import { computed, type Component } from 'vue';
-import type { FormDefinition } from './types';
+import type { FormSubmitEvent } from '@primevue/forms';
+import type { FormFieldScope } from './types';
+import type { FormDefinition, FormFieldDefinition } from './types';
 import { createResolver } from './create-resolver';
 import FieldText from './fields/FieldText.vue';
 import FieldNumber from './fields/FieldNumber.vue';
@@ -10,6 +12,8 @@ import FieldTextarea from './fields/FieldTextarea.vue';
 import FieldCheckbox from './fields/FieldCheckbox.vue';
 import FieldDate from './fields/FieldDate.vue';
 import FieldPassword from './fields/FieldPassword.vue';
+
+type FormModel = Record<string, unknown>;
 
 const fieldComponentMap: Record<string, Component> = {
   text: FieldText,
@@ -23,14 +27,14 @@ const fieldComponentMap: Record<string, Component> = {
 };
 
 const props = defineProps<{
-  definition: FormDefinition<any>;
-  modelValue: any;
+  definition: FormDefinition<FormModel>;
+  modelValue: FormModel;
   mode?: 'create' | 'edit' | 'view';
   submitting?: boolean;
 }>();
 
 const emit = defineEmits<{
-  submit: [value: any];
+  submit: [value: FormModel];
   close: [];
 }>();
 
@@ -39,9 +43,8 @@ const isViewOnly = computed(() => props.mode === 'view');
 const resolver = computed(() => createResolver(props.definition));
 
 const initialValues = computed(() => {
-  const base = { ...props.modelValue };
+  const base: FormModel = { ...props.modelValue };
   for (const field of props.definition.fields) {
-    // Ensure every form field has an entry so PrimeVue Forms includes it in event.values
     if (!(field.name in base)) {
       base[field.name] = field.type === 'checkbox' ? false : null;
     }
@@ -50,57 +53,51 @@ const initialValues = computed(() => {
       base[field.name] != null &&
       !(base[field.name] instanceof Date)
     ) {
-      const parsed = new Date(base[field.name]);
+      const parsed = new Date(base[field.name] as string | number);
       base[field.name] = isNaN(parsed.getTime()) ? null : parsed;
     }
   }
   return base;
 });
 
-function isFieldHidden(field: any, formState: any): boolean {
+function getFormValues(formState: Record<string, FormFieldScope>): FormModel {
+  return Object.fromEntries(
+    props.definition.fields.map((f) => [f.name, formState[f.name]?.value ?? props.modelValue?.[f.name]])
+  );
+}
+
+function isFieldHidden(field: FormFieldDefinition<FormModel>, formState: Record<string, FormFieldScope>): boolean {
   if (field.hidden === undefined || field.hidden === false) return false;
   if (typeof field.hidden === 'function') {
-    const values = Object.fromEntries(
-      props.definition.fields.map((f: any) => [
-        f.name,
-        formState[f.name]?.value ?? props.modelValue?.[f.name],
-      ])
-    );
-    return field.hidden(values);
+    return field.hidden(getFormValues(formState));
   }
   return !!field.hidden;
 }
 
-function isFieldDisabled(field: any, formState: any): boolean {
+function isFieldDisabled(field: FormFieldDefinition<FormModel>, formState: Record<string, FormFieldScope>): boolean {
   if (isViewOnly.value) return true;
   if (typeof field.disabled === 'function') {
-    const values = Object.fromEntries(
-      props.definition.fields.map((f: any) => [
-        f.name,
-        formState[f.name]?.value ?? props.modelValue?.[f.name],
-      ])
-    );
-    return field.disabled(values);
+    return field.disabled(getFormValues(formState));
   }
   return false;
 }
 
-function onSubmit(event: any) {
+function onSubmit(event: FormSubmitEvent): void {
   if (event.valid) {
-    emit('submit', event.values);
+    emit('submit', event.values as FormModel);
   }
 }
 </script>
 
 <template>
   <Form
-    :resolver="resolver"
-    :initialValues="initialValues"
-    :validateOnBlur="true"
-    :validateOnValueUpdate="false"
-    :validateOnSubmit="true"
-    @submit="onSubmit"
     v-slot="formState"
+    :resolver="resolver"
+    :initial-values="initialValues"
+    :validate-on-blur="true"
+    :validate-on-value-update="false"
+    :validate-on-submit="true"
+    @submit="onSubmit"
   >
     <div class="flex flex-col gap-4">
       <div :class="definition.gridClass ?? 'flex flex-col gap-4'">
@@ -108,7 +105,7 @@ function onSubmit(event: any) {
 
           <!-- Custom field: named slot -->
           <div
-            v-if="field.type === 'custom' && !isFieldHidden(field, formState)"
+            v-if="field.type === 'custom' && !isFieldHidden(field, formState as unknown as Record<string, FormFieldScope>)"
             :class="field.colClass"
           >
             <slot :name="field.name" />
@@ -116,15 +113,15 @@ function onSubmit(event: any) {
 
           <!-- Standard fields -->
           <div
-            v-else-if="field.type !== 'custom' && !isFieldHidden(field, formState) && !(isViewOnly && field.type === 'password')"
+            v-else-if="field.type !== 'custom' && !isFieldHidden(field, formState as unknown as Record<string, FormFieldScope>) && !(isViewOnly && field.type === 'password')"
             :class="field.colClass"
           >
-            <FormField :name="field.name" v-slot="$field">
+            <FormField v-slot="$field" :name="field.name">
               <component
                 :is="fieldComponentMap[field.type]"
                 :field="field"
-                :fieldState="$field"
-                :disabled="isFieldDisabled(field, formState)"
+                :field-state="$field"
+                :disabled="isFieldDisabled(field, formState as unknown as Record<string, FormFieldScope>)"
               />
             </FormField>
           </div>
@@ -138,7 +135,7 @@ function onSubmit(event: any) {
           icon="pi pi-save"
           :label="definition.submitLabel ?? 'Uložit'"
           :loading="submitting"
-          :disabled="submitting || definition.fields.filter(f => f.required).some(f => !formState[f.name]?.value) || (definition.canSubmit ? !definition.canSubmit(Object.fromEntries(definition.fields.map(f => [f.name, formState[f.name]?.value]))) : false)"
+          :disabled="submitting || definition.fields.filter(f => f.required).some(f => !(formState as unknown as Record<string, FormFieldScope>)[f.name]?.value) || (definition.canSubmit ? !definition.canSubmit(Object.fromEntries(definition.fields.map(f => [f.name, (formState as unknown as Record<string, FormFieldScope>)[f.name]?.value]))) : false)"
         />
       </div>
     </div>
