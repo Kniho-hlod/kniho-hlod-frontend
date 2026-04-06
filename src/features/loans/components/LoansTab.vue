@@ -155,13 +155,14 @@ const currentTab = computed(() =>
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <h1 class="text-2xl font-bold text-surface-800">{{ t('loans.title') }}</h1>
-      <Button
-        :label="t('loans.new')"
-        icon="pi pi-plus"
-        size="small"
-        class="hidden lg:block self-start"
-        @click="openDialog()"
-      />
+      <div class="hidden lg:block">
+        <Button
+          :label="t('loans.new')"
+          icon="pi pi-plus"
+          size="small"
+          @click="openDialog()"
+        />
+      </div>
     </div>
 
     <!-- Search -->

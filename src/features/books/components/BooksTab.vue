@@ -109,13 +109,14 @@ onMounted(() => {
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <h1 class="text-2xl font-bold text-surface-800">{{ t('books.title') }}</h1>
-      <Button
-        :label="t('books.new')"
-        icon="pi pi-plus"
-        size="small"
-        class="hidden lg:block self-start"
-        @click="openEditDialog()"
-      />
+      <div class="hidden lg:block">
+        <Button
+          :label="t('books.new')"
+          icon="pi pi-plus"
+          size="small"
+          @click="openEditDialog()"
+        />
+      </div>
     </div>
 
     <!-- Search + Filter -->
