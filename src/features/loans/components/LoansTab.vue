@@ -12,6 +12,8 @@ import { useConfirmDialog } from '@/shared/composables/use-confirm-dialog';
 import LoanCard from '@/features/loans/components/LoanCard.vue';
 import { LOAN_TAB, type LoanTab } from '@/features/loans/constants';
 import { usePagination } from '@/shared/composables/use-pagination';
+import FabButton from '@/shared/components/FabButton.vue';
+import { useFabScroll } from '@/shared/composables/use-fab-scroll';
 
 const { t } = useI18n();
 const store = useLoanStore();
@@ -29,7 +31,7 @@ const availableBooks = computed(() =>
   bookStore.entities
     .filter(
       (book) =>
-        book.ownerId === loggedUser?.id && !store.entities.some((loan) => loan.bookId === book.id)
+        book.ownerId === loggedUser?.id && !store.entities.some((loan) => loan.bookId === book.id && !loan.isReturned)
     )
     .map((book) => ({ label: book.title, value: book.id }))
 );
@@ -66,7 +68,7 @@ function openDialog(data?: ExtendedLoan): void {
 
 const { confirmDelete } = useConfirmDialog();
 
-function deleteLoan(loan: ExtendedLoan) {
+function deleteLoan(loan: ExtendedLoan): void {
   confirmDelete({
     text: t('loans.deleteConfirm'),
     handleConfirmCallback: async () => {
@@ -120,10 +122,32 @@ const {
   reset: resetArchived,
 } = usePagination(() => filteredArchivedLoans.value);
 
+const { isVisible } = useFabScroll();
+
 watch([searchQuery, activeTab], () => {
   resetActive();
   resetArchived();
 });
+
+const currentTab = computed(() =>
+  activeTab.value === LOAN_TAB.ACTIVE
+    ? {
+        loans: pagedActiveLoans.value,
+        total: totalActive.value,
+        first: firstActive.value,
+        onPageChange: onActivePageChange,
+        empty: t('loans.emptyActive'),
+        emptyIcon: 'pi pi-check-circle',
+      }
+    : {
+        loans: pagedArchivedLoans.value,
+        total: totalArchived.value,
+        first: firstArchived.value,
+        onPageChange: onArchivedPageChange,
+        empty: t('loans.emptyArchived'),
+        emptyIcon: 'pi pi-inbox',
+      }
+);
 </script>
 
 <template>
@@ -135,18 +159,18 @@ watch([searchQuery, activeTab], () => {
         :label="t('loans.new')"
         icon="pi pi-plus"
         size="small"
-        class="self-start"
+        class="hidden lg:block self-start"
         @click="openDialog()"
       />
     </div>
 
     <!-- Search -->
     <div class="relative">
-      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"></i>
+      <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"></i>
       <InputText
         v-model="searchQuery"
         :placeholder="t('loans.searchPlaceholder')"
-        class="w-full sm:w-80 pl-9"
+        fluid
       />
     </div>
 
@@ -189,16 +213,16 @@ watch([searchQuery, activeTab], () => {
       </button>
     </div>
 
-    <!-- Active loans card grid -->
-    <template v-if="activeTab === LOAN_TAB.ACTIVE">
-      <div v-if="filteredActiveLoans.length === 0" class="text-center py-12 text-surface-400">
-        <i class="pi pi-check-circle text-4xl mb-3 block text-surface-200"></i>
-        <p>{{ t('loans.emptyActive') }}</p>
-      </div>
-      <template v-else>
+    <!-- Loan cards -->
+    <div v-if="currentTab.loans.length === 0" class="text-center py-12 text-surface-400">
+      <i :class="currentTab.emptyIcon" class="text-4xl mb-3 block text-surface-200"></i>
+      <p>{{ currentTab.empty }}</p>
+    </div>
+    <Card v-else>
+      <template #content>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <LoanCard
-            v-for="loan in pagedActiveLoans"
+            v-for="loan in currentTab.loans"
             :key="loan.id"
             :loan="loan"
             @detail="openDialog(loan)"
@@ -206,45 +230,19 @@ watch([searchQuery, activeTab], () => {
             @mark-returned="markAsReturned(loan)"
           />
         </div>
-        <Paginator
-          v-if="totalActive > 12"
-          :first="firstActive"
-          :rows="12"
-          :total-records="totalActive"
-          :rows-per-page-options="[12, 24, 48]"
-          class="mt-2"
-          @page="onActivePageChange"
-        />
+        <template v-if="currentTab.total > 12">
+          <Divider />
+          <Paginator
+            :first="currentTab.first"
+            :rows="12"
+            :total-records="currentTab.total"
+            :rows-per-page-options="[12, 24, 48]"
+            @page="currentTab.onPageChange"
+          />
+        </template>
       </template>
-    </template>
+    </Card>
 
-    <!-- Archived loans card grid -->
-    <template v-if="activeTab === LOAN_TAB.ARCHIVED">
-      <div v-if="filteredArchivedLoans.length === 0" class="text-center py-12 text-surface-400">
-        <i class="pi pi-inbox text-4xl mb-3 block text-surface-200"></i>
-        <p>{{ t('loans.emptyArchived') }}</p>
-      </div>
-      <template v-else>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <LoanCard
-            v-for="loan in pagedArchivedLoans"
-            :key="loan.id"
-            :loan="loan"
-            @detail="openDialog(loan)"
-            @delete="deleteLoan(loan)"
-            @mark-returned="markAsReturned(loan)"
-          />
-        </div>
-        <Paginator
-          v-if="totalArchived > 12"
-          :first="firstArchived"
-          :rows="12"
-          :total-records="totalArchived"
-          :rows-per-page-options="[12, 24, 48]"
-          class="mt-2"
-          @page="onArchivedPageChange"
-        />
-      </template>
-    </template>
+    <FabButton :visible="isVisible" @click="openDialog()" />
   </div>
 </template>
