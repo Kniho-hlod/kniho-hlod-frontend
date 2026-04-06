@@ -46,7 +46,7 @@ const { t } = useI18n();
         <AccordionHeader>
           <div class="flex items-center gap-2">
             <i class="pi pi-cog text-primary-500"></i>
-            <span class="font-medium">{{ t('account.tabPreferences') }}</span>
+            <span class="font-medium">{{ t('account.tabPreferences') }} - Unavailable</span>
           </div>
         </AccordionHeader>
         <AccordionContent>

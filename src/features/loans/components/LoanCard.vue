@@ -7,6 +7,8 @@ import { LOAN_STATUS_SEVERITY } from '@/shared/utils/constants/severity';
 import { formatDate } from '@/shared/utils/date';
 import GenericCard from '@/shared/components/card/GenericCard.vue';
 import type { CardBadge } from '@/shared/components/card/types';
+import { USER_ROLE } from '@/features/users/constants';
+import { usePermissions } from '@/shared/composables/use-permissions';
 
 const props = defineProps<{
   loan: ExtendedLoan;
@@ -19,6 +21,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { isAllowed } = usePermissions();
 
 const isOverdue = computed(() => {
   if (props.loan.isReturned || !props.loan.returnDate) return false;
@@ -35,6 +38,7 @@ const actions = computed(() => [
     icon: 'pi pi-search',
     severity: 'secondary' as const,
     label: t('loans.detail'),
+    visible: isAllowed([USER_ROLE.ADMIN, USER_ROLE.USER]),
     onClick: () => emit('detail', props.loan),
   },
   {
@@ -42,10 +46,15 @@ const actions = computed(() => [
     severity: 'success' as const,
     outlined: false,
     label: t('loans.markReturned'),
-    visible: !props.loan.isReturned,
+    visible: isAllowed([USER_ROLE.ADMIN, USER_ROLE.USER]) && !props.loan.isReturned,
     onClick: () => emit('markReturned', props.loan),
   },
-  { icon: 'pi pi-trash', severity: 'danger' as const, onClick: () => emit('delete', props.loan) },
+  {
+    icon: 'pi pi-trash',
+    severity: 'danger' as const,
+    visible: isAllowed([USER_ROLE.ADMIN]),
+    onClick: () => emit('delete', props.loan),
+  },
 ]);
 
 const badge = computed<CardBadge>(() => {

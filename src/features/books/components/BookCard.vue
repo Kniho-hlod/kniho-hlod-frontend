@@ -7,6 +7,8 @@ import { MS_PER_DAY } from '@/features/loans/constants';
 import { BOOK_AVAILABILITY_SEVERITY } from '@/shared/utils/constants/severity';
 import GenericCard from '@/shared/components/card/GenericCard.vue';
 import type { CardBadge } from '@/shared/components/card/types';
+import { usePermissions } from '@/shared/composables/use-permissions';
+import { USER_ROLE } from '@/features/users/constants';
 
 const props = defineProps<{
   book: ExtendedBook;
@@ -18,6 +20,7 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+const { isAllowed } = usePermissions();
 
 const activeLoan = computed(() => {
   const loans = getLoansForBook(props.book.id);
@@ -35,8 +38,8 @@ const overdueDays = computed(() => {
 });
 
 const actions = computed(() => [
-  { icon: 'pi pi-info-circle', severity: 'secondary' as const, onClick: () => emit('edit', props.book) },
-  { icon: 'pi pi-trash', severity: 'danger' as const, onClick: () => emit('delete', props.book) },
+  { icon: 'pi pi-info-circle', severity: 'secondary' as const, onClick: () => emit('edit', props.book), visible: isAllowed([USER_ROLE.ADMIN, USER_ROLE.USER]) },
+  { icon: 'pi pi-trash', severity: 'danger' as const, onClick: () => emit('delete', props.book), visible: isAllowed([USER_ROLE.ADMIN]) || (isAllowed([USER_ROLE.USER]) && !activeLoan.value) },
 ]);
 
 const badge = computed<CardBadge>(() => {

@@ -20,7 +20,7 @@ const timezoneOptions = [
   { label: 'New York (UTC-5)', value: 'America/New_York' },
 ];
 
-function savePreferences() {
+function savePreferences(): void {
   localStorage.setItem('timezone', timezone.value);
   showSaveSuccess(t('common.save'), t('account.savePreferences'));
 }
@@ -28,7 +28,6 @@ function savePreferences() {
 
 <template>
   <div class="grid gap-5">
-    <!-- Timezone -->
     <div>
       <label class="block text-surface-700 font-medium mb-1.5 text-sm">
         {{ t('account.timezone') }}
@@ -39,10 +38,10 @@ function savePreferences() {
         option-label="label"
         option-value="value"
         fluid
+        disabled
       />
     </div>
 
-    <!-- Notifications -->
     <div>
       <p class="text-surface-700 font-medium text-sm mb-3">{{ t('account.notifications') }}</p>
       <div class="grid gap-3">
@@ -53,7 +52,7 @@ function savePreferences() {
             <p class="text-surface-700 text-sm font-medium">{{ t('account.notifNews') }}</p>
             <p class="text-surface-400 text-xs">{{ t('account.notifNewsDesc') }}</p>
           </div>
-          <ToggleSwitch v-model="notifications.news" />
+          <ToggleSwitch v-model="notifications.news" disabled />
         </label>
 
         <label
@@ -63,7 +62,7 @@ function savePreferences() {
             <p class="text-surface-700 text-sm font-medium">{{ t('account.notifLoanExpiry') }}</p>
             <p class="text-surface-400 text-xs">{{ t('account.notifLoanExpiryDesc') }}</p>
           </div>
-          <ToggleSwitch v-model="notifications.loanExpiry" />
+          <ToggleSwitch v-model="notifications.loanExpiry" disabled />
         </label>
 
         <label
@@ -73,13 +72,13 @@ function savePreferences() {
             <p class="text-surface-700 text-sm font-medium">{{ t('account.notifSecurity') }}</p>
             <p class="text-surface-400 text-xs">{{ t('account.notifSecurityDesc') }}</p>
           </div>
-          <ToggleSwitch v-model="notifications.security" />
+          <ToggleSwitch v-model="notifications.security" disabled />
         </label>
       </div>
     </div>
 
     <div class="flex justify-end">
-      <Button :label="t('account.savePreferences')" icon="pi pi-check" @click="savePreferences" />
+      <Button :label="t('account.savePreferences')" icon="pi pi-check" disabled @click="savePreferences" />
     </div>
   </div>
 </template>

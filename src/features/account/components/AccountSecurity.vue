@@ -45,8 +45,7 @@ function openPasswordChangeDialog(): void {
           :label="t('account.changePassword')"
           icon="pi pi-key"
           size="small"
-          outlined
-          severity="secondary"
+          severity="primary"
           @click="openPasswordChangeDialog"
         />
       </div>
@@ -54,7 +53,7 @@ function openPasswordChangeDialog(): void {
 
     <div class="p-4 bg-surface-50 rounded-xl flex items-center justify-between">
       <div>
-        <p class="font-medium text-surface-700 text-sm">{{ t('account.twoFactor') }}</p>
+        <p class="font-medium text-surface-700 text-sm">{{ t('account.twoFactor') }} - Unavailable</p>
         <p class="text-surface-400 text-xs">{{ t('account.twoFactorDesc') }}</p>
       </div>
       <div class="flex items-center gap-3">
@@ -63,8 +62,7 @@ function openPasswordChangeDialog(): void {
           :label="t('account.activate')"
           icon="pi pi-lock"
           size="small"
-          outlined
-          severity="secondary"
+          severity="primary"
           disabled
         />
       </div>

@@ -33,21 +33,23 @@ const visibleActions = computed(() => (props.actions ?? []).filter((a) => a.visi
           <p v-if="subtitle" class="text-surface-500 text-xs truncate mt-0.5">{{ subtitle }}</p>
         </div>
       </div>
-
-      <Tag v-if="badge" :severity="badge.severity" class="shrink-0">
-        <template #default>
-          <span class="flex items-center gap-1">
-            <i v-if="badge.icon" :class="[badge.icon, 'text-xs']"></i>
-            {{ badge.label }}
-          </span>
-        </template>
-      </Tag>
     </div>
 
     <slot />
 
-    <div v-if="visibleActions.length" class="flex gap-2 pt-1 border-t border-surface-100 justify-end">
-      <Button
+    <div v-if="visibleActions.length" class="flex gap-2 pt-1 border-t border-surface-100 items-center justify-between">
+      <div>
+        <Tag v-if="badge" :severity="badge.severity" class="shrink-0">
+          <template #default>
+            <span class="flex items-center gap-1">
+              <i v-if="badge.icon" :class="[badge.icon, 'text-xs']"></i>
+              {{ badge.label }}
+            </span>
+          </template>
+        </Tag>
+      </div>
+      <div class="flex gap-2">
+        <Button
         v-for="(action, i) in visibleActions"
         :key="i"
         :icon="action.icon"
@@ -56,7 +58,8 @@ const visibleActions = computed(() => (props.actions ?? []).filter((a) => a.visi
         :title="action.label"
         size="small"
         @click.stop="action.onClick()"
-      />
+        />
+      </div> 
+      </div>
     </div>
-  </div>
-</template>
+  </template>
