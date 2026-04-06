@@ -3,6 +3,7 @@ import { Form, FormField } from '@primevue/forms';
 import { computed, type Component } from 'vue';
 import type { FormSubmitEvent } from '@primevue/forms';
 import type { FormFieldScope } from './types';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import type { FormDefinition, FormFieldDefinition } from './types';
 import { createResolver } from './create-resolver';
 import FieldText from './fields/FieldText.vue';
@@ -27,7 +28,8 @@ const fieldComponentMap: Record<string, Component> = {
 };
 
 const props = defineProps<{
-  definition: FormDefinition<FormModel>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  definition: FormDefinition<any>;
   modelValue: FormModel;
   mode?: 'create' | 'edit' | 'view';
   submitting?: boolean;
@@ -62,7 +64,7 @@ const initialValues = computed(() => {
 
 function getFormValues(formState: Record<string, FormFieldScope>): FormModel {
   return Object.fromEntries(
-    props.definition.fields.map((f) => [f.name, formState[f.name]?.value ?? props.modelValue?.[f.name]])
+    props.definition.fields.map((f: FormFieldDefinition<FormModel>) => [f.name, formState[f.name]?.value ?? props.modelValue?.[f.name]])
   );
 }
 

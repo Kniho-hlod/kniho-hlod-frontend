@@ -101,6 +101,8 @@ export default {
     password: 'Heslo',
     passwordLastChanged: 'Naposledy změněno: {date}',
     changePassword: 'Změnit heslo',
+    currentPassword: 'Aktuální heslo',
+    currentPasswordPlaceholder: 'Zadejte aktuální heslo',
     newPassword: 'Nové heslo',
     newPasswordPlaceholder: 'Minimálně 6 znaků',
     confirmPassword: 'Potvrdit heslo',

@@ -4,8 +4,6 @@ import type { FormDefinition } from '@/shared/components/form/types';
 import { ref } from 'vue';
 import { useNotification } from './use-notification';
 
-type FormModel = Record<string, unknown>;
-
 interface FormDialogConfig<T> {
   definition: FormDefinition<T>;
   modelValue: T;
@@ -25,8 +23,8 @@ export function useFormDialog() {
     const dialogRef = dialog.open(
       GenericForm,
       {
-        definition: definition as FormDefinition<FormModel>,
-        modelValue: modelValue as FormModel,
+        definition,
+        modelValue,
         mode,
         submitting: isSubmitting.value,
       },

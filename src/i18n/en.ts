@@ -101,6 +101,8 @@ export default {
     password: 'Password',
     passwordLastChanged: 'Last changed: {date}',
     changePassword: 'Change password',
+    currentPassword: 'Current password',
+    currentPasswordPlaceholder: 'Enter current password',
     newPassword: 'New password',
     newPasswordPlaceholder: 'At least 6 characters',
     confirmPassword: 'Confirm password',
