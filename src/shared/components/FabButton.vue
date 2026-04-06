@@ -10,6 +10,6 @@ const emit = defineEmits<{ click: [] }>();
     aria-label="Add new"
     @click="emit('click')"
   >
-    <i class="pi pi-plus text-xl"></i>
+    <i class="pi pi-plus text-xl" aria-hidden="true"></i>
   </button>
 </template>
