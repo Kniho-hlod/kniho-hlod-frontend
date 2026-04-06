@@ -35,7 +35,7 @@ const overdueDays = computed(() => {
 });
 
 const actions = computed(() => [
-  { icon: 'pi pi-pencil', severity: 'secondary' as const, onClick: () => emit('edit', props.book) },
+  { icon: 'pi pi-info-circle', severity: 'secondary' as const, onClick: () => emit('edit', props.book) },
   { icon: 'pi pi-trash', severity: 'danger' as const, onClick: () => emit('delete', props.book) },
 ]);
 

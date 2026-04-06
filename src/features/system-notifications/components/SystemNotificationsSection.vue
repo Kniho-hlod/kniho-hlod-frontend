@@ -101,7 +101,7 @@ onMounted(() => {
         </div>
         <div class="flex gap-1 shrink-0">
           <Button
-            icon="pi pi-pencil"
+            icon="pi pi-info-circle"
             text
             rounded
             size="small"

@@ -1,7 +1,7 @@
 import type { FormDefinition } from '@/shared/components/form/types';
-import type { SystemNotification } from '@/types/entities';
+import type { CreateSystemNotificationDto } from '@/types/entities';
 
-export const systemNotificationForm: FormDefinition<SystemNotification> = {
+export const systemNotificationForm: FormDefinition<CreateSystemNotificationDto> = {
   gridClass: 'grid grid-cols-2 gap-4',
   fields: [
     {

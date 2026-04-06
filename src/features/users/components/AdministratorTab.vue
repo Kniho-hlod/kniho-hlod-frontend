@@ -75,7 +75,7 @@ function openDialog(data?: ExtendedUser): void {
 
 const { confirmDelete } = useConfirmDialog();
 
-function deleteUser(data: User) {
+function deleteUser(data: User): void {
   confirmDelete({
     text: t('admin.deleteConfirm'),
     handleConfirmCallback: async () => {
@@ -133,7 +133,7 @@ onMounted(() => {
     <!-- Search -->
     <div class="relative">
       <i
-        class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
+        class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
       ></i>
       <InputText
         v-model="searchQuery"

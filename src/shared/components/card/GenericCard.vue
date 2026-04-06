@@ -46,7 +46,7 @@ const visibleActions = computed(() => (props.actions ?? []).filter((a) => a.visi
 
     <slot />
 
-    <div v-if="visibleActions.length" class="flex gap-2 pt-1 border-t border-surface-100">
+    <div v-if="visibleActions.length" class="flex gap-2 pt-1 border-t border-surface-100 justify-end">
       <Button
         v-for="(action, i) in visibleActions"
         :key="i"
@@ -55,7 +55,6 @@ const visibleActions = computed(() => (props.actions ?? []).filter((a) => a.visi
         :outlined="action.outlined !== false"
         :title="action.label"
         size="small"
-        class="flex-1"
         @click.stop="action.onClick()"
       />
     </div>
