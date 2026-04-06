@@ -13,6 +13,8 @@ import BookDetailDialog from '@/features/books/components/BookDetailDialog.vue';
 import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
 import { BOOK_FILTER, type BookFilter } from '@/features/books/constants';
 import { usePagination } from '@/shared/composables/use-pagination';
+import FabButton from '@/shared/components/FabButton.vue';
+import { useFabScroll } from '@/shared/composables/use-fab-scroll';
 
 const { t } = useI18n();
 const store = useBookStore();
@@ -76,7 +78,7 @@ function openDetail(book: ExtendedBook): void {
 
 const { confirmDelete } = useConfirmDialog();
 
-function deleteBook(data: Book) {
+function deleteBook(data: Book): void {
   confirmDelete({
     text: t('books.deleteConfirm'),
     handleConfirmCallback: async () => {
@@ -92,6 +94,8 @@ const filterOptions = computed(() => [
 ]);
 
 const { paginated: pagedBooks, total, first, onPageChange, reset } = usePagination(() => filteredBooks.value);
+
+const { isVisible } = useFabScroll();
 
 watch([searchQuery, activeFilter], reset);
 
@@ -109,7 +113,7 @@ onMounted(() => {
         :label="t('books.new')"
         icon="pi pi-plus"
         size="small"
-        class="self-start"
+        class="hidden lg:block self-start"
         @click="openEditDialog()"
       />
     </div>
@@ -118,12 +122,12 @@ onMounted(() => {
     <div class="flex flex-col sm:flex-row gap-3">
       <div class="relative flex-1">
         <i
-          class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
+          class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"
         ></i>
         <InputText
           v-model="searchQuery"
           :placeholder="t('books.searchPlaceholder')"
-          class="w-full pl-9"
+          fluid
         />
       </div>
       <div class="flex gap-2 flex-wrap">
@@ -151,18 +155,20 @@ onMounted(() => {
 
     <template v-else>
       <!-- Card grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <BookCard
-          v-for="book in pagedBooks"
-          :key="book.id"
-          :book="book"
-          @edit="openDetail"
-          @delete="deleteBook"
-        />
-      </div>
-
-      <!-- Pagination -->
-      <Paginator
+       <card>
+        <template #content>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <BookCard
+            v-for="book in pagedBooks"
+            :key="book.id"
+            :book="book"
+            @edit="openDetail"
+            @delete="deleteBook"
+          />
+        </div>
+        <divider />
+        <!-- Pagination -->
+        <Paginator
         v-if="total > 12"
         :first="first"
         :rows="12"
@@ -170,7 +176,12 @@ onMounted(() => {
         :rows-per-page-options="[12, 24, 48]"
         class="mt-2"
         @page="onPageChange"
-      />
-    </template>
-  </div>
+        />
+      </template>
+    </card>
+  </template>
+
+    <FabButton :visible="isVisible" @click="openEditDialog()" />
+    </div>
 </template>
+  
