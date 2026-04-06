@@ -155,7 +155,7 @@ onMounted(() => {
 
     <template v-else>
       <!-- Card grid -->
-       <card>
+       <Card>
         <template #content>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <BookCard
@@ -166,7 +166,7 @@ onMounted(() => {
             @delete="deleteBook"
           />
         </div>
-        <divider />
+        <Divider />
         <!-- Pagination -->
         <Paginator
         v-if="total > 12"
@@ -178,7 +178,7 @@ onMounted(() => {
         @page="onPageChange"
         />
       </template>
-    </card>
+    </Card>
   </template>
 
     <FabButton :visible="isVisible" @click="openEditDialog()" />
