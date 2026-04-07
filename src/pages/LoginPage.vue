@@ -6,7 +6,6 @@ import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
 import { CreateUserDto } from '@/types/entities';
 import type { FormDefinition } from '@/shared/components/form/types';
 import { authorizationStore } from '@/stores/authorization-store';
-import { useUserStore } from '@/features/users/store';
 import { computed, onMounted, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getServices } from '@kniho-hlod/kniho-hlod-service';
@@ -26,7 +25,6 @@ const canLogin = computed(() => userData.email.trim() !== '' && userData.passwor
 
 const { showSaveSuccess, showSaveError } = useNotification();
 const { handleLogin } = authorizationStore();
-const store = useUserStore();
 
 async function handleAuthorization(): Promise<void> {
   isProcessing.value = true;
@@ -78,7 +76,7 @@ async function handleRegistration(values: Record<string, unknown>): Promise<void
   const payload = { ...(values as CreateUserDto), role: 'user' as const };
 
   try {
-    await store.saveEntity(payload);
+    await getServices().auth.register(payload);
     showSaveSuccess(
       t('login.registrationSuccess'),
       t('login.registrationSuccessDetail', { username: payload.username })
