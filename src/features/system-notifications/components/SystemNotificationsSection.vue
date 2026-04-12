@@ -20,6 +20,7 @@ function openDialog(data?: ExtendedSystemNotification): void {
       await store.saveEntity(content);
     },
     mode: data ? 'view' : 'create',
+    dialogSize: 'form',
     header: data ? t('systemNotifications.editTitle', { title: data.title }) : t('systemNotifications.newTitle'),
   });
 }

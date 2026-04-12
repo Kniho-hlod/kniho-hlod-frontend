@@ -12,7 +12,6 @@ export const registrationForm: FormDefinition<RegistrationUser> = {
       label: 'Email',
       type: 'email',
       required: true,
-      placeholder: 'Zadejte svůj email.',
       validators: [
         (value) =>
           typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)

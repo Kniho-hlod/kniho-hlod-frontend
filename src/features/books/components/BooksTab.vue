@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useBookStore, type ExtendedBook } from '@/features/books/store';
-import { Book } from '@/types/entities';
+import { Book, Loan } from '@/types/entities';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { bookForm } from '@/features/books/books-form-definition';
+import { loanForm } from '@/features/loans/loans-form-definition';
 import { useLoanStore } from '@/features/loans/store';
 import { useFormDialog } from '@/shared/composables/use-form-dialog';
 import { useConfirmDialog } from '@/shared/composables/use-confirm-dialog';
@@ -55,12 +56,30 @@ const dialog = usePreferredDialog();
 function openEditDialog(data?: Book): void {
   openFormDialog({
     definition: bookForm,
-    modelValue: data ?? { ...new Book() },
+    modelValue: data ? { ...data, lendImmediately: false } : { ...new Book(), lendImmediately: false },
     onSave: async (content) => {
-      await store.saveEntity({ ...content, ownerId: loggedUser!.id });
+      const { lendImmediately, ...bookData } = content as Book & { lendImmediately?: boolean };
+      const saved = await store.saveEntity({ ...bookData, ownerId: loggedUser!.id });
+      if (lendImmediately && saved) {
+        openLoanDialog(saved.id);
+      }
     },
     mode: data ? 'view' : 'create',
     header: data ? t('books.editTitle', { title: (data as Book).title }) : t('books.new'),
+    dialogSize: 'form',
+  });
+}
+
+function openLoanDialog(bookId: string): void {
+  openFormDialog({
+    definition: loanForm,
+    modelValue: { ...new Loan(), bookId },
+    onSave: async (content) => {
+      await loanStore.saveEntity({ ...content, bookId, ownerId: loggedUser!.id });
+    },
+    mode: 'create',
+    dialogSize: 'form',
+    header: t('loans.new'),
   });
 }
 

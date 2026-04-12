@@ -69,6 +69,7 @@ function openDialog(data?: ExtendedUser): void {
       await store.saveEntity(content);
     },
     mode: data ? 'view' : 'create',
+    dialogSize:'form',
     header: data ? t('admin.userDetail', { username: data.username }) : t('admin.newUser'),
   });
 }

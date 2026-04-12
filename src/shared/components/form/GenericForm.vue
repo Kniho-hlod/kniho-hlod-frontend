@@ -13,6 +13,7 @@ import FieldTextarea from './fields/FieldTextarea.vue';
 import FieldCheckbox from './fields/FieldCheckbox.vue';
 import FieldDate from './fields/FieldDate.vue';
 import FieldPassword from './fields/FieldPassword.vue';
+import FieldDescription from './fields/FieldDescription.vue';
 
 type FormModel = Record<string, unknown>;
 
@@ -113,9 +114,17 @@ function onSubmit(event: FormSubmitEvent): void {
             <slot :name="field.name" />
           </div>
 
+          <!-- Description field: static text block -->
+          <div
+            v-else-if="field.type === 'description' && !isFieldHidden(field, formState as unknown as Record<string, FormFieldScope>)"
+            :class="field.colClass"
+          >
+            <FieldDescription :field="field" />
+          </div>
+
           <!-- Standard fields -->
           <div
-            v-else-if="field.type !== 'custom' && !isFieldHidden(field, formState as unknown as Record<string, FormFieldScope>) && !(isViewOnly && field.type === 'password')"
+            v-else-if="field.type !== 'custom' && field.type !== 'description' && !isFieldHidden(field, formState as unknown as Record<string, FormFieldScope>) && !(isViewOnly && field.type === 'password')"
             :class="field.colClass"
           >
             <FormField v-slot="$field" :name="field.name">

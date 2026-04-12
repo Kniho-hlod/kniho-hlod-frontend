@@ -1,7 +1,7 @@
 import type { FormDefinition } from '@/shared/components/form/types';
 import { Book } from '@/types/entities';
 
-export const bookForm: FormDefinition<Book> = {
+export const bookForm: FormDefinition<Book & {lendImmediately: boolean}> = {
   gridClass: 'grid grid-cols-2 gap-4',
   fields: [
     {
@@ -61,6 +61,12 @@ export const bookForm: FormDefinition<Book> = {
       required: true,
       colClass: 'col-span-1',
       validators: [(value) => (value === undefined ? 'Musíte vybrat dostupnost' : null)],
+    },
+    {
+      name: 'lendImmediately',
+      label: 'Ihned zapůjčit',
+      type: 'checkbox',
+      colClass: 'col-span-2',
     },
   ],
   submitLabel: 'Uložit knihu',

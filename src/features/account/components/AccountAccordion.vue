@@ -11,8 +11,8 @@ const { t } = useI18n();
 <template>
   <div class="grid gap-4">
     <div>
-      <h1 class="text-2xl font-bold text-surface-800">{{ t('account.title') }}</h1>
-      <p class="text-surface-500 text-sm">{{ t('account.subtitle') }}</p>
+      <h1 class="text-2xl font-bold text-surface-800 dark:text-stone-100">{{ t('account.title') }}</h1>
+      <p class="text-surface-500 dark:text-stone-400 text-sm">{{ t('account.subtitle') }}</p>
     </div>
 
     <UserCard />

@@ -72,6 +72,12 @@ export interface CustomFieldDef<T> extends BaseFieldDef<T> {
   type: 'custom';
 }
 
+export interface DescriptionFieldDef<T> extends BaseFieldDef<T> {
+  type: 'description';
+  text: string;
+  class?: string;
+}
+
 export type FormFieldDefinition<T> =
   | TextFieldDef<T>
   | PasswordFieldDef<T>
@@ -80,7 +86,8 @@ export type FormFieldDefinition<T> =
   | DateFieldDef<T>
   | TextareaFieldDef<T>
   | CheckboxFieldDef<T>
-  | CustomFieldDef<T>;
+  | CustomFieldDef<T>
+  | DescriptionFieldDef<T>;
 
 export interface FormDefinition<T> {
   fields: Array<FormFieldDefinition<T>>;

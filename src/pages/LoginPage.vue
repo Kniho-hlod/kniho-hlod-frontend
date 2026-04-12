@@ -3,6 +3,7 @@ import { registrationForm } from '@/features/users/form-definitions/registration
 import GenericForm from '@/shared/components/form/GenericForm.vue';
 import { useNotification } from '@/shared/composables/use-notification';
 import { usePreferredDialog } from '@/shared/composables/use-preferred-dialog';
+import { useFormDialog } from '@/shared/composables/use-form-dialog';
 import { CreateUserDto } from '@/types/entities';
 import type { FormDefinition } from '@/shared/components/form/types';
 import { authorizationStore } from '@/stores/authorization-store';
@@ -10,8 +11,49 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { getServices } from '@kniho-hlod/kniho-hlod-service';
 import type { SystemNotification } from '@/types/entities';
+import { setLocale } from '@/i18n';
+import { useDarkMode } from '@/shared/composables/use-dark-mode';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
+const { isDark, toggle } = useDarkMode();
+const { openFormDialog } = useFormDialog();
+
+const forgotPasswordForm: FormDefinition<{ email: string, info: string }> = {
+  fields: [
+    {
+      name: 'info',
+      label: '',
+      type: 'description',
+      text: t('login.forgotPasswordInfo'),
+    },
+    {
+      name: 'email',
+      label: 'Email',
+      type: 'email',
+      required: true,
+      validators: [
+        (value) =>
+          typeof value === 'string' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+            ? 'Zadejte platný email'
+            : null,
+      ],
+    },
+  ],
+  submitLabel: t('login.forgotPasswordSubmit'),
+  showCancel: true,
+};
+
+function openForgotPassword(): void {
+  openFormDialog({
+    definition: forgotPasswordForm as FormDefinition<Record<string, unknown>>,
+    modelValue: { email: '' },
+    header: t('login.forgotPasswordTitle'),
+    dialogSize: 'compact',
+    onSave: async () => {
+      // TODO: volat API pro reset hesla
+    },
+  });
+}
 
 const userData = reactive({
   email: '',
@@ -63,7 +105,6 @@ function openRegistrationDialog(data: CreateUserDto): void {
       onSubmit: handleRegistration as unknown as (value: Record<string, unknown>) => void,
     },
     {
-      modal: true,
       header: t('login.registrationTitle'),
       dialogSize: 'form',
     }
@@ -96,6 +137,21 @@ async function handleRegistration(values: Record<string, unknown>): Promise<void
 
 <template>
   <div class="flex items-center justify-center min-h-dvh bg-hlod bg-cover bg-center bg-no-repeat">
+    <!-- Language switcher — top left -->
+    <div class="fixed top-3 left-3 flex items-center gap-1 z-10 bg-white dark:bg-stone-800/80 rounded-lg p-1">
+      <Button label="CS" :text="locale !== 'cs'" size="small" @click="setLocale('cs')" />
+      <Button label="EN" :text="locale !== 'en'" size="small" @click="setLocale('en')" />
+    </div>
+
+    <!-- Dark mode toggle — top right -->
+    <div class="fixed top-3 right-3 z-10 bg-white dark:bg-stone-800/80 rounded-lg p-1">
+      <Button
+        :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'"
+        text
+        size="small"
+        @click="toggle"
+      />
+    </div>
     <div class="w-full max-w-md mx-4">
       <!-- Active system notifications -->
       <div v-if="activeNotifications.length > 0" class="mb-4 grid gap-2">
@@ -103,10 +159,10 @@ async function handleRegistration(values: Record<string, unknown>): Promise<void
           v-for="n in activeNotifications"
           :key="n.id"
           :severity="n.severity === 'warn' ? 'warn' : 'info'"
-          :closable="false"
+          :icon="n.severity === 'warn' ? 'pi pi-exclamation-triangle' : 'pi pi-info-circle'"
         >
-          <span class="font-semibold">{{ n.title }}</span>
-          <span v-if="n.message" class="ml-1">— {{ n.message }}</span>
+          <span class="font-bold mb-2">{{ n.title }}</span>
+          <p v-if="n.message" class="">{{ n.message }}</p>
         </Message>
       </div>
 
@@ -130,13 +186,21 @@ async function handleRegistration(values: Record<string, unknown>): Promise<void
             <label for="email" class="block text-surface-700 font-medium mb-2 text-sm">
               {{ t('login.email') }}
             </label>
-            <InputText id="email" v-model="userData.email" type="text" class="w-full" />
+            <InputText id="email" v-model="userData.email" type="text" fluid />
           </div>
 
           <div class="mb-6">
-            <label for="password" class="block text-surface-700 font-medium mb-2 text-sm">
-              {{ t('login.password') }}
-            </label>
+            <div class="flex items-center justify-between mb-2">
+              <label for="password" class="block text-surface-700 font-medium text-sm">
+                {{ t('login.password') }}
+              </label>
+              <a
+                class="text-xs text-primary-500 font-medium cursor-pointer hover:text-primary-600 hover:underline"
+                @click="openForgotPassword"
+              >
+                {{ t('login.forgotPassword') }}
+              </a>
+            </div>
             <Password
               id="password"
               v-model="userData.password"

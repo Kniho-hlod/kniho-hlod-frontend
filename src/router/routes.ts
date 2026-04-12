@@ -54,6 +54,11 @@ export const routes = [
     component: () => import('@/pages/LoginPage.vue'),
   },
   {
+    path: '/reset-password',
+    name: 'reset-password',
+    component: () => import('@/pages/ResetPasswordPage.vue'),
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('@/pages/ErrorNotFound.vue'),
   },

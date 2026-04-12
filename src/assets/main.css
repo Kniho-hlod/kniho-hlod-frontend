@@ -17,3 +17,12 @@ h2,
 h3 {
   @apply tracking-tight;
 }
+
+@media (max-width: 768px) {
+  .p-toast.p-toast {
+    width: 85vw;
+  }
+  .p-toast .p-toast-message.p-toast-message {
+    border-radius: 12px;
+  }
+}

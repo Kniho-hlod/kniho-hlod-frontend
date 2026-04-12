@@ -36,33 +36,43 @@ const availableBooks = computed(() =>
     .map((book) => ({ label: book.title, value: book.id }))
 );
 
-const editedLoanForm = computed<FormDefinition<Loan>>(() => ({
-  ...loanForm,
-  fields: [
-    {
-      name: 'bookId',
-      label: t('loans.bookLabel'),
-      type: 'select',
-      required: true,
-      placeholder: t('loans.selectBook'),
-      options: availableBooks.value,
-      colClass: 'col-span-2',
-    },
-    ...loanForm.fields,
-  ],
-}));
+function buildLoanForm(loan?: ExtendedLoan): FormDefinition<Loan> {
+  let options = availableBooks.value;
+  if (loan?.bookEntity) {
+    const alreadyIncluded = options.some((o) => o.value === loan.bookId);
+    if (!alreadyIncluded) {
+      options = [{ label: loan.bookEntity.title ?? '', value: loan.bookId! }, ...options];
+    }
+  }
+  return {
+    ...loanForm,
+    fields: [
+      {
+        name: 'bookId',
+        label: t('loans.bookLabel'),
+        type: 'select',
+        required: true,
+        placeholder: t('loans.selectBook'),
+        options,
+        colClass: 'col-span-2',
+      },
+      ...loanForm.fields,
+    ],
+  };
+}
 
 const { openFormDialog } = useFormDialog();
 
 function openDialog(data?: ExtendedLoan): void {
   openFormDialog({
-    definition: editedLoanForm.value,
+    definition: buildLoanForm(data),
     modelValue: data ?? new Loan(),
     onSave: async (content) => {
       await store.saveEntity({ ...content, ownerId: loggedUser!.id });
     },
     mode: data ? 'view' : 'create',
-    header: data ? t('loans.detailTitle', { id: data.id }) : t('loans.new'),
+    dialogSize: 'form',
+    header: data ? t('loans.detailTitle') : t('loans.new'),
   });
 }
 
@@ -166,17 +176,16 @@ const currentTab = computed(() =>
     </div>
 
     <!-- Search -->
-    <div class="relative">
-      <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"></i>
-      <InputText
-        v-model="searchQuery"
-        :placeholder="t('loans.searchPlaceholder')"
-        fluid
-      />
-    </div>
-
-    <!-- Tabs -->
-    <div class="flex gap-2">
+     <div class="flex flex-col sm:flex-row gap-3">
+       <div class="relative flex-1">
+         <i class="pi pi-search absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 pointer-events-none"></i>
+         <InputText
+         v-model="searchQuery"
+         :placeholder="t('loans.searchPlaceholder')"
+         fluid
+         />
+        </div>
+        <div class="flex gap-2">
       <button
         class="px-4 py-2 rounded-lg text-sm font-medium transition-all border"
         :class="
@@ -213,6 +222,10 @@ const currentTab = computed(() =>
         {{ t('loans.tabArchived') }}
       </button>
     </div>
+      </div>
+
+    <!-- Tabs -->
+    
 
     <!-- Loan cards -->
     <div v-if="currentTab.loans.length === 0" class="text-center py-12 text-surface-400">

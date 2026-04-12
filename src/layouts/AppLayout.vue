@@ -47,7 +47,7 @@ function isActive(itemRoute: string): boolean {
 // Drawer (mobile)
 const drawerVisible = ref(false);
 
-function navigate(itemRoute: string) {
+function navigate(itemRoute: string):void {
   router.push(itemRoute);
   drawerVisible.value = false;
 }
@@ -174,8 +174,15 @@ const avatarUrl = useAvatarUrl(loggedUser?.id);
       </header>
 
       <!-- Page content -->
-      <main class="flex-1 p-4 lg:p-6 bg-surface-50 overflow-y-auto">
-        <router-view />
+      <main class="flex-1 overflow-y-auto relative">
+        <!-- Background image - fixed, blurred -->
+        <div class="fixed inset-0 bg-hlod bg-cover bg-no-repeat blur-sm opacity-70 dark:opacity-20 -z-10"></div>
+        <!-- Color overlay for readability -->
+        <div class="fixed inset-0 bg-white/65 dark:bg-stone-950/75 -z-10"></div>
+        <!-- Content -->
+        <div class="p-4 lg:p-6">
+          <router-view />
+        </div>
       </main>
     </div>
 

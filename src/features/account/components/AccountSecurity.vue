@@ -18,6 +18,7 @@ function openPasswordChangeDialog(): void {
     definition: passwordChangeFormDefinition,
     modelValue: { currentPassword: '', newPassword: '', confirmPassword: '' },
     mode: 'create',
+    dialogSize: 'form',
     header: t('account.changePassword'),
     onSave: async (values) => {
       await getServices().auth.changePassword({
@@ -31,11 +32,11 @@ function openPasswordChangeDialog(): void {
 
 <template>
   <div class="grid gap-5">
-    <div class="p-4 bg-surface-50 rounded-xl">
+    <div class="p-4 bg-surface-50 dark:bg-stone-800 rounded-xl">
       <div class="flex items-center justify-between">
         <div>
-          <p class="font-medium text-surface-700 text-sm">{{ t('account.password') }}</p>
-          <p class="text-surface-400 text-xs">
+          <p class="font-medium text-surface-700 dark:text-stone-200 text-sm">{{ t('account.password') }}</p>
+          <p class="text-surface-400 dark:text-stone-400 text-xs">
             {{
               t('account.passwordLastChanged', { date: formatDate(loggedUser?.updatedAt) || '—' })
             }}
@@ -51,10 +52,10 @@ function openPasswordChangeDialog(): void {
       </div>
     </div>
 
-    <div class="p-4 bg-surface-50 rounded-xl flex items-center justify-between">
+    <div class="p-4 bg-surface-50 dark:bg-stone-800 rounded-xl flex items-center justify-between">
       <div>
-        <p class="font-medium text-surface-700 text-sm">{{ t('account.twoFactor') }} - Unavailable</p>
-        <p class="text-surface-400 text-xs">{{ t('account.twoFactorDesc') }}</p>
+        <p class="font-medium text-surface-700 dark:text-stone-200 text-sm">{{ t('account.twoFactor') }} - Unavailable</p>
+        <p class="text-surface-400 dark:text-stone-400 text-xs">{{ t('account.twoFactorDesc') }}</p>
       </div>
       <div class="flex items-center gap-3">
         <Tag :value="t('account.inactive')" severity="secondary" />
