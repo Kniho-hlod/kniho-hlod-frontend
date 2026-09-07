@@ -26,15 +26,7 @@ export const useLoanStore = defineEntityStore<Loan, ExtendLoan>(
       return bookStore.getRawEntity(target.bookId) ?? null;
     },
   },
-  {
-    service: {
-      getAll: (params) => getServices().loans.getAll(params),
-      getById: (id) => getServices().loans.getById(id),
-      create: (data) => getServices().loans.create(data),
-      update: (id, data) => getServices().loans.update(id, data),
-      remove: (id) => getServices().loans.delete(id),
-    },
-  }
+  () => getServices().loans
 );
 
 export function getAllLoans(): Array<ExtendedLoan> {

@@ -10,15 +10,7 @@ export type ExtendedBook = CreateExtendedEntity<Book, ExtendBook>;
 export const useBookStore = defineEntityStore<Book, ExtendBook>(
   'bookStore',
   {},
-  {
-    service: {
-      getAll: (params) => getServices().books.getAll(params),
-      getById: (id) => getServices().books.getById(id),
-      create: (data) => getServices().books.create(data),
-      update: (id, data) => getServices().books.update(id, data),
-      remove: (id) => getServices().books.delete(id),
-    },
-  }
+  () => getServices().books
 );
 
 export function getAllBooks(): Array<ExtendedBook> {

@@ -10,12 +10,5 @@ export type ExtendedFile = CreateExtendedEntity<ProfileImage, ExtendFile>;
 export const useFileStore = defineEntityStore<ProfileImage, ExtendFile>(
   'profileImageStore',
   {},
-  {
-    service: {
-      getAll: (params) => getServices().files.getAll(params),
-      getById: (id) => getServices().files.getById(id),
-      create: (data) => getServices().files.create(data),
-      remove: (id) => getServices().files.delete(id),
-    },
-  }
+  () => getServices().files
 );

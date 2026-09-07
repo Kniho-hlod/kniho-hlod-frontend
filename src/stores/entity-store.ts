@@ -5,7 +5,7 @@ import type {
   BaseEntity,
   CreateExtendedEntity,
   EntityExtension,
-  EntityStoreConfig,
+  EntityStoreService,
   PaginationParams,
 } from '@/types/store-definition';
 
@@ -19,7 +19,8 @@ export function defineEntityStore<
   extensions: { [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]> } = {} as {
     [K in keyof TExtend]: EntityExtension<TEntity, TExtend[K]>;
   },
-  config: EntityStoreConfig<TEntity, TCreate, TUpdate>,
+  /** Getter for the live service — e.g. `() => getServices().books`. Called per operation. */
+  getService: () => EntityStoreService<TEntity, TCreate, TUpdate>,
 ) {
   return defineStore(storeName, () => {
     const rawEntitiesMap = ref(new Map<string, TEntity>()) as Ref<Map<string, TEntity>>;
@@ -50,7 +51,9 @@ export function defineEntityStore<
       error.value = null;
       isLoading.value = true;
       try {
-        const response = await config.service.getAll(params);
+        const service = getService();
+        if (!service.getAll) throw new Error('getAll not supported by this service');
+        const response = await service.getAll(params);
         rawEntitiesMap.value = new Map(response.data.map((e) => [e.id, e]));
         total.value = response.total;
       } catch (err) {
@@ -63,11 +66,12 @@ export function defineEntityStore<
     async function getEntity(
       id: string,
     ): Promise<CreateExtendedEntity<TEntity, TExtend> | null> {
-      if (!config.service.getById) return null;
+      const service = getService();
+      if (!service.getById) return null;
       error.value = null;
       isLoading.value = true;
       try {
-        const entity = await config.service.getById(id);
+        const entity = await service.getById(id);
         rawEntitiesMap.value.set(entity.id, entity);
         return extendEntity(entity);
       } catch (err) {
@@ -88,13 +92,14 @@ export function defineEntityStore<
       error.value = null;
       isLoading.value = true;
       try {
+        const service = getService();
         let saved: TEntity;
         if (entityData.id) {
-          if (!config.service.update) throw new Error('update not supported by this service');
-          saved = await config.service.update(entityData.id, entityData as unknown as TUpdate);
+          if (!service.update) throw new Error('update not supported by this service');
+          saved = await service.update(entityData.id, entityData as unknown as TUpdate);
         } else {
-          if (!config.service.create) throw new Error('create not supported by this service');
-          saved = await config.service.create(entityData);
+          if (!service.create) throw new Error('create not supported by this service');
+          saved = await service.create(entityData);
         }
         rawEntitiesMap.value.set(saved.id, saved);
         return extendEntity(saved);
@@ -107,11 +112,12 @@ export function defineEntityStore<
     }
 
     async function deleteEntity(id: string): Promise<boolean> {
-      if (!config.service.remove) return false;
+      const service = getService();
+      if (!service.delete) return false;
       error.value = null;
       isLoading.value = true;
       try {
-        await config.service.remove(id);
+        await service.delete(id);
         rawEntitiesMap.value.delete(id);
         return true;
       } catch (err) {

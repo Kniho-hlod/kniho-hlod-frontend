@@ -15,13 +15,5 @@ export const useSystemNotificationStore = defineEntityStore<
 >(
   'systemNotificationStore',
   {},
-  {
-    service: {
-      getAll: (params) => getServices().systemNotifications.getAll(params),
-      getById: (id) => getServices().systemNotifications.getById(id),
-      create: (data) => getServices().systemNotifications.create(data),
-      update: (id, data) => getServices().systemNotifications.update(id, data),
-      remove: (id) => getServices().systemNotifications.delete(id),
-    },
-  }
+  () => getServices().systemNotifications
 );

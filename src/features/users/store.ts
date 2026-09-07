@@ -10,13 +10,5 @@ export type ExtendedUser = CreateExtendedEntity<User, ExtendUser>;
 export const useUserStore = defineEntityStore<User, ExtendUser, CreateUserDto>(
   'userStore',
   {},
-  {
-    service: {
-      getAll: (params) => getServices().users.getAll(params),
-      getById: (id) => getServices().users.getById(id),
-      create: (data) => getServices().users.create(data),
-      update: (id, data) => getServices().users.update(id, data),
-      remove: (id) => getServices().users.delete(id),
-    },
-  }
+  () => getServices().users
 );
